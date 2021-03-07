@@ -15,7 +15,7 @@ jobs:
         with:
           client-id: ${{ secrets.CLIENT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
-          refresh-token: ${{ secrets.REFERSH_TOKEN }}
+          refresh-token: ${{ secrets.REFRESH_TOKEN }}
       - name: Find and replace ss_id secrets
         uses: jacobtomlinson/gha-find-replace@master
         with:
