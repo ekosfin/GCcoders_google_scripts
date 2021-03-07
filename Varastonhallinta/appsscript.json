@@ -1,0 +1,79 @@
+{
+  "timeZone": "America/New_York",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "PinjaImporter",
+        "version": "0",
+        "libraryId": "1mDhUw3xLw8ZSJcMo5yuar0YGX8jGCoSjIui5ssWFmpbEOKV4bOmRhxlk",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "RemeoUtils",
+        "version": "0",
+        "libraryId": "1nF7w7f-VmgBVUFpPBVDOAVch_d2jLIEoc9COzxX2_j7zjZpOjIh-TgV4",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "SheetManagementUtils",
+        "version": "0",
+        "libraryId": "15YibYb0bGnvCWZdVMaB9yZ5rFrjykjZe-XHzE7pd7N8V66BUiB40iuOF",
+        "developmentMode": true
+      }
+    ]
+  },
+  "sheets": {
+    "macros": [
+      {
+        "menuName": "GenerateDayBarFormatting",
+        "functionName": "GenerateDayBarFormatting"
+      },
+      {
+        "menuName": "lisaa",
+        "functionName": "lisaa"
+      },
+      {
+        "menuName": "Add Column",
+        "functionName": "AddColumn"
+      },
+      {
+        "menuName": "Group",
+        "functionName": "Group"
+      },
+      {
+        "menuName": "Remove group",
+        "functionName": "Removegroup"
+      },
+      {
+        "menuName": "FormatMacro",
+        "functionName": "FormatMacro"
+      },
+      {
+        "menuName": "ExpandRight",
+        "functionName": "ExpandRight"
+      },
+      {
+        "menuName": "ExpandStatistics",
+        "functionName": "ExpandStatistics"
+      },
+      {
+        "menuName": "UpdateChart",
+        "functionName": "UpdateChart"
+      },
+      {
+        "menuName": "UpdateChart2",
+        "functionName": "UpdateChart2"
+      },
+      {
+        "menuName": "UpdateChart3",
+        "functionName": "UpdateChart3"
+      },
+      {
+        "menuName": "test123",
+        "functionName": "test123"
+      }
+    ]
+  }
+}

@@ -29,9 +29,20 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 12
-      - name: install clasp in toiminnanohjaus
-        working-directory: ./Toiminnanohjaus
-        run: npm install @google/clasp
+      - name: install clasp
+        run: npm install -g @google/clasp
       - name: toiminnanohjaus push
         working-directory: ./Toiminnanohjaus
+        run: npm run push-to-app
+      - name: Varastonhallinta push
+        working-directory: ./Varastonhallinta
+        run: npm run push-to-app
+      - name: SheetManagmentUtils push
+        working-directory: ./SheetManagmentUtils
+        run: npm run push-to-app
+      - name: RemeoUtils push
+        working-directory: ./RemeoUtils
+        run: npm run push-to-app
+      - name: PinjaImporter push
+        working-directory: ./PinjaImporter
         run: npm run push-to-app
