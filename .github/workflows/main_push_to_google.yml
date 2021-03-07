@@ -34,5 +34,5 @@ jobs:
       - name: install clasp
         run: npm install -g @google/clasp
       - name: toiminnanohjaus push
-        working-directory: ./Toiminanohjaus
+        working-directory: ./Toiminnanohjaus
         run: npm run push-to-app
