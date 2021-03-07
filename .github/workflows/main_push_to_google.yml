@@ -1,0 +1,38 @@
+name: Push to google app scripts
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: namaggarwal/clasp-token-action@v0.0.1
+        with:
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          refresh-token: ${{ secrets.REFERSH_TOKEN }}
+      - name: Find and replace ss_id secrets
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "REPLACE_SS_ID"
+          replace: ${{ secrets.SS_ID }}
+          include: "Toiminanohjaus/"
+      - name: Find and replace JWT_KEY secrets
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "REPLACE_JWT_KEY"
+          replace: ${{ secrets.JWT_KEY }}
+          include: "Toiminanohjaus/"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - name: install clasp
+        run: npm install -g @google/clasp
+      - name: toiminnanohjaus push
+        working-directory: ./Toiminanohjaus
+        run: npm run push-to-app

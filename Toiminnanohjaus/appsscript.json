@@ -1,0 +1,38 @@
+{
+  "timeZone": "America/New_York",
+  "dependencies": {
+  },
+  "webapp": {
+    "access": "ANYONE_ANONYMOUS",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "sheets": {
+    "macros": [{
+      "menuName": "CollapseRows",
+      "functionName": "CollapseRows"
+    }, {
+      "menuName": "Nimetön makro",
+      "functionName": "myFunction"
+    }, {
+      "menuName": "test",
+      "functionName": "test"
+    }, {
+      "menuName": "test12",
+      "functionName": "test12"
+    }, {
+      "menuName": "test3",
+      "functionName": "test3"
+    }, {
+      "menuName": "CopyTemplate",
+      "functionName": "CopyTemplate"
+    }, {
+      "menuName": "test1",
+      "functionName": "test1"
+    }, {
+      "menuName": "test2",
+      "functionName": "test2"
+    }]
+  }
+}

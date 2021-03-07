@@ -1,0 +1,11 @@
+{
+  "name": "toiminnanohjaus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "push-to-app": "clasp push"
+  },
+  "author": "",
+  "license": "ISC"
+}
