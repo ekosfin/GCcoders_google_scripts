@@ -92,6 +92,8 @@ function expandSheets() {
 /* markCurrentDate changes green line to appropriate place. */
 function markCurrentDates() {
   const now = new Date();
+  // Add 5 hours to reduce problems with timezones
+  now.setHours(now.getHours() + 5);
   updateDetails.forEach((detail, _) => {
     const sheet = sApp.getSheetByName(detail.sheetName);
     SheetManagementUtils.markCurrentDate(sheet, detail.dateMode, now);
