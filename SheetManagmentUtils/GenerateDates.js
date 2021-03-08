@@ -99,7 +99,11 @@ function updateGrouping_(sheet, columns, maxDepth) {
 // Show new cells
 function expandPreviousHiding_(sheet, columnsRequired) {
   let previousHiding = parseInt(documentProperties.getProperty(LAST_HIDE_PREFIX + sheet.getName()));
-  if (previousHiding != undefined && columnsRequired - previousHiding > 0 && columnsRequired < sheet.getMaxColumns()) {
+  if (previousHiding != undefined && columnsRequired < sheet.getMaxColumns()) {
+    // If nothing new will be shown
+    if (columnsRequired - previousHiding) {
+      return;
+    }
     sheet.showColumns(previousHiding, columnsRequired);
   } else {
     sheet.showColumns(1, sheet.getMaxColumns());
