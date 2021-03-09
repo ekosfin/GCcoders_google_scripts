@@ -10,11 +10,12 @@ function timeDifferenceInWeeks(startDate, endDate) {
 
 function timeDifferenceInMonths(startDate, endDate) {
   let months;
-  months = (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12;
-  months += endDate.getUTCMonth() - startDate.getUTCMonth();
+  months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+  months += endDate.getMonth() - startDate.getMonth();
   return months;
 }
 
+// Get amount of columns between start day and desired end date
 function getColumnAmountByEndDate(dateMode, endDate) {
   initialize();
   switch (dateMode) {
@@ -22,13 +23,14 @@ function getColumnAmountByEndDate(dateMode, endDate) {
       return timeDifferenceInDays(START_DATE_SETTING, endDate)
     case DATE_MODE.WEEK:
       // Shift start date to first monday
-      const startDate = START_DATE_SETTING.getUTCNextMonday();
+      const startDate = START_DATE_SETTING.getNextMonday();
       return timeDifferenceInWeeks(startDate, endDate)
     case DATE_MODE.MONTH:
       return timeDifferenceInMonths(START_DATE_SETTING, endDate)
   }
 }
 
+// Check that there is enough space to fit endDate properly
 function checkAndUpdateSpace(sheet, dateMode, endDate) {
   initialize();
   // Plus 1 just to be sure that space is large enough
@@ -36,15 +38,16 @@ function checkAndUpdateSpace(sheet, dateMode, endDate) {
   if (sheet.getMaxColumns() < columnsRequired) {
     const neededAdditionalColumns = columnsRequired - sheet.getMaxColumns();
     sheet.insertColumnsAfter(sheet.getMaxColumns(), neededAdditionalColumns);
-    RemeoUtils.info(`Lisättiin ${neededAdditionalColumns} saraketta päivämäärien mahduttamiseksi.`);
+    Utils.Log.info(`Lisättiin ${neededAdditionalColumns} saraketta päivämäärien mahduttamiseksi.`);
   }
 }
 
+// Get cell (column) value based on the desired date
 function getCellByDate(dateMode, date) {
   initialize();
   const difference = getColumnAmountByEndDate(dateMode, date);
   const column = START_DATE_CELL_SETTING.column + difference;
-  const columnLetter = RemeoUtils.convertColumnIndexToLetter(column);
+  const columnLetter = Utils.Cell.convertColumnIndexToLetter(column);
   const cell = {row: START_DATE_CELL_SETTING.row,
                 column: column,
                 columnLetter: columnLetter,

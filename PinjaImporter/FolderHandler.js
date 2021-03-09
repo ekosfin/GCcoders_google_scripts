@@ -1,3 +1,5 @@
+// Converts all Excel files to Google spreadsheet files in Pinja folder and
+// removes old Excel files.
 // https://stackoverflow.com/questions/56063156/script-to-convert-xlsx-to-google-sheet-and-move-converted-file
 function convertExcelFilesToSheets_() {
   const folder = DriveApp.getFolderById(PINJA_FOLDER_ID);
@@ -14,10 +16,13 @@ function convertExcelFilesToSheets_() {
       Drive.Files.insert(newFile, blob, {convert: true});
       // Remove old xlsx file
       Drive.Files.remove(file.getId());
+      Utils.Log.info(`Muutettiin tiedosto: "${fileName}" Excel muodosta spreadsheet muotoon onnistuneesti.`);
     }
   }
 }
 
+// Load all spreadsheet files in Pinja folder and import data from them
+// using importPinjaData_ function. Add results to the list.
 function importPinjasFromFolder_(productList) {
   const folder = DriveApp.getFolderById(PINJA_FOLDER_ID);
   const files = folder.getFiles();
@@ -27,8 +32,8 @@ function importPinjasFromFolder_(productList) {
     const mimeType = file.getMimeType();
     const fileId = file.getId();
 
-    // Convert excel files to sheet files
-    if (mimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+    // Skip non spreadsheet files
+    if (mimeType != "application/vnd.google-apps.spreadsheet") {
       continue
     }
 
@@ -49,17 +54,21 @@ function mergeMultipleResults_(fileResults) {
 
   // Use first file as basis for merge
   const merged = fileResults[0];
-  for (let fileIndex = 0; fileIndex < fileResults.length; fileIndex++) {
+  // Go through all files
+  for (let fileIndex = 1; fileIndex < fileResults.length; fileIndex++) {
+    // Go through all products in those files
     for (const product in fileResults[fileIndex]) {
       const productData = fileResults[fileIndex][product]
       if (!Object.prototype.hasOwnProperty.call(fileResults[fileIndex], product)) {
           continue;
       }
+      // Go through all directions (in, out) in those products
       for (const direction in productData) {
         const directionData = productData[direction];
         if (!Object.prototype.hasOwnProperty.call(productData, direction)) {
             continue;
         }
+        // Go through all date entries in dataset
         for (const date in directionData) {
           const dateData = directionData[date];
           if (!Object.prototype.hasOwnProperty.call(directionData, date)) {
@@ -74,6 +83,7 @@ function mergeMultipleResults_(fileResults) {
       }
     }
   }
+  Utils.Log.info(`Yhsitettiin Pinjan tiedostot onnistuneesti ${fileResults.length} tiedostosta.`);
   return merged;
 }
 
@@ -83,95 +93,4 @@ function importPinjaData(productList) {
   const fileResults = importPinjasFromFolder_(productList);
   const results = mergeMultipleResults_(fileResults);
   return results;
-}
-
-function testImportPinjasFromFolder() {
-  const productList = `Alite
-Arvometallit
-Asbesti
-Asfaltti
-Betoni
-Betoni 100-500 mm
-Betoni alle 100 mm
-Betoni yli 500 mm
-Betoni, tiili ja muu kiviaines
-Biojäte pakattu
-Bitumi
-bitumihuopa
-Bojäte pakkaamaton
-Energiajäte
-Eristevilla
-HDPE Muovi
-Huonekalut
-Irtotavara ST1-P
-Kaapelit
-Kartonki 5.02
-Kartonkipaali 5.02
-Kaukolämpöputki
-Keräyslasi
-Kierrätysmetalli
-Kierrätyspuu A
-Kierrätyspuu B
-Kierrätyspuu C
-Kierrätyspuu D
-Kierrätyspuuhake
-Kipsi
-kotikeräyspaperi 1.09
-Kovat Muovit
-Kumi
-Kuormalavat
-kylmälaitteet
-Laboratoriolasi
-Lasikuitu
-LDPE kirkas irto
-LDPE kirkas paali
-LDPE värillinen irto
-LDPE värillinen paali
-Leipäjäte Lidl Janakkala ST1-L
-Lyijyakut
-Maa-ainekset
-Metsäpuu, kannot ja risut
-Metsäpuuhake
-Muovipakkaukset
-Pahvi 1.05
-Pahvipaali 1.05
-Pakattu leipä ST1
-Palosammuttimet
-Paperi
-Patjat
-Pilaantuneet maa-ainekset
-Posliini
-PP Muovit
-Punnituspalvelu
-Purkuikkunat
-Purkujäte
-Purkupuu
-Puupuru
-PVC Muovi
-Rakennusjäte
-Rakennusjäte - sis. betoni
-Rakennusjäte 1 laatu, yli 50%
-Rakennusjäte 2 laatu, alle 50%
-Rengasmurske
-Renkaat
-Reunanauha 2.03
-Romuajoneuvot
-Ruostumattomat teräkset
-Sairaalalasi
-Sekajäte/polttokelpoinen jäte
-Sekapelti
-SER-jäte
-SRF kierrätyspolttoaine
-Suursäkit
-Taikina ST1-E
-Talkoojäte
-Tasolasi
-Tekstiilit
-Tietosuojapaperi
-Toimistopaperi 3.10
-Tuulilasit
-Vaaralliset jätteet
-Viira`.split("\n");
-  const results = importPinjaData(productList)
-  console.log(JSON.stringify(results));
 }

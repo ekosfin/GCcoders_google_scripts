@@ -1,5 +1,7 @@
-/* Add functions to date objects in this library */
-/***************************************************/
+/* Add functions to date objects in this library.
+   These function would be better somewhere else,
+   but they can't be moved due to App Script restrictions */
+/*******************************************************************************************/
 // c
 
 /**
@@ -9,7 +11,7 @@
  * @param int dowOffset
  * @return int
  */
-Date.prototype.getUTCWeek = function () {
+Date.prototype.getWeek = function() {
   /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.epoch-calendar.com */
 
 	const newYear = new Date(this.getFullYear(),0,1);
@@ -36,56 +38,53 @@ Date.prototype.getUTCWeek = function () {
 	return weeknum;
 };
 
-/*
-Date.prototype.getUTCWeek = function() {
-  let date = new Date(this.getTime());
-  date.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-  // January 4 is always in week 1.
-  let week1 = new Date(date.getFullYear(), 0, 4);
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                        - 3 + (week1.getDay() + 6) % 7) / 7);
-}*/
-
-Date.prototype.getUTCNextMonday = function() {
+// Return date of next monday, unless current date is monday
+Date.prototype.getNextMonday = function() {
   // Loop until first day of week
   let newDate = new Date(this);
-  while (newDate.getUTCDay() != 1) {
-    newDate.setUTCDate(newDate.getUTCDate() + 1);
+  while (newDate.getDay() != 1) {
+    newDate.setDate(newDate.getDate() + 1);
   }
   return newDate;
 }
 
-Date.prototype.getUTCNextMonth = function() {
+
+// Return date of next month, unless current date is 1 day of the month
+Date.prototype.getNextMonth = function() {
   // Loop until it is next 1st day of month
   let newDate = new Date(this);
-  while (newDate.getUTCDate() != 1) {
-    newDate.setUTCDate(newDate.getUTCDate() + 1);
+  while (newDate.getDate() != 1) {
+    newDate.setDate(newDate.getDate() + 1);
   }
   return newDate;
 }
-/***************************************************/
+/*******************************************************************************************/
 
+// Different date modes, that are currently supported
 var DATE_MODE = {
   DAY: "day",
   WEEK: "week",
   MONTH: "month"
 }
 
+// Month names used for printing
 const MONTHS = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu",
                 "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"]
 
+// Function initializes constants that can be downloaded from the settings
+// Constants are lazely donwloaded to speed up start up time, because settings
+// operations are expensive.
 let INITIALIZED = false;
 function initialize() {
   if (INITIALIZED) {
     return
   }
   INITIALIZED = true;
-  WAREHOUSE_START_CELL_SETTING = RemeoUtils.getCellSettingByKey("Varaston arvon solu");
-  START_DATE_CELL_SETTING = RemeoUtils.getCellSettingByKey("Päivämäärien aloitus solu");
-  START_DATE_SETTING = new Date(RemeoUtils.getDateByKey("Aloitus päivämäärä"));
+  Utils = new RemeoUtils.Instance();
+  WAREHOUSE_START_CELL_SETTING = Utils.Settings.getCellByKey("Varaston arvon solu");
+  START_DATE_CELL_SETTING = Utils.Settings.getCellByKey("Päivämäärien aloitus solu");
+  START_DATE_SETTING = new Date(Utils.Settings.getDateByKey("Aloitus päivämäärä"));
+  CURRENT_DATE_COLOR = Utils.Settings.getByKey("Nykyisen päivän väri")[0];
 }
 
 const LAST_DATE_PREFIX = "LAST_DATE_";

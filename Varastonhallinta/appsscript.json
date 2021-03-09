@@ -1,13 +1,13 @@
 {
-  "timeZone": "America/New_York",
+  "timeZone": "Europe/Helsinki",
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8",
   "dependencies": {
     "libraries": [
       {
-        "userSymbol": "PinjaImporter",
+        "userSymbol": "SheetManagementUtils",
         "version": "0",
-        "libraryId": "1mDhUw3xLw8ZSJcMo5yuar0YGX8jGCoSjIui5ssWFmpbEOKV4bOmRhxlk",
+        "libraryId": "15YibYb0bGnvCWZdVMaB9yZ5rFrjykjZe-XHzE7pd7N8V66BUiB40iuOF",
         "developmentMode": true
       },
       {
@@ -17,9 +17,9 @@
         "developmentMode": true
       },
       {
-        "userSymbol": "SheetManagementUtils",
+        "userSymbol": "PinjaImporter",
         "version": "0",
-        "libraryId": "15YibYb0bGnvCWZdVMaB9yZ5rFrjykjZe-XHzE7pd7N8V66BUiB40iuOF",
+        "libraryId": "1mDhUw3xLw8ZSJcMo5yuar0YGX8jGCoSjIui5ssWFmpbEOKV4bOmRhxlk",
         "developmentMode": true
       }
     ]

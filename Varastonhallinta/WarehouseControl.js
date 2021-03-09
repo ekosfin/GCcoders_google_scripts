@@ -1,43 +1,3 @@
-const sApp = SpreadsheetApp.getActiveSpreadsheet();
-
-const endDate = new Date();
-// Expand one extra month forward, while updating date information.
-endDate.setDate(endDate.getDate() + 31);
-
-// Sheet names can be changed, but order should not be changed!
-// Changing the ordering will lead to data loss.
-const updateDetails = [{
-  sheetName: "Saa",
-  dateMode: SheetManagementUtils.DATE_MODE.DAY
-}, {
-  sheetName: "Läh",
-  dateMode: SheetManagementUtils.DATE_MODE.DAY
-}, {
-  sheetName: "SaaVi",
-  dateMode: SheetManagementUtils.DATE_MODE.WEEK
-}, {
-  sheetName: "LähVi",
-  dateMode: SheetManagementUtils.DATE_MODE.WEEK
-}, {
-  sheetName: "VaVi",
-  dateMode: SheetManagementUtils.DATE_MODE.WEEK
-}, {
-  sheetName: "VaViRa",
-  dateMode: SheetManagementUtils.DATE_MODE.WEEK
-},{
-  sheetName: "SaaKu",
-  dateMode: SheetManagementUtils.DATE_MODE.MONTH
-}, {
-  sheetName: "LähKu",
-  dateMode: SheetManagementUtils.DATE_MODE.MONTH
-}, {
-  sheetName: "VaKu",
-  dateMode: SheetManagementUtils.DATE_MODE.MONTH
-}, {
-  sheetName: "VaKuRa",
-  dateMode: SheetManagementUtils.DATE_MODE.MONTH
-}];
-
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
 
@@ -62,58 +22,61 @@ function onOpen() {
    There are multiple separate functions to mitigate script time restriction */
 
 function updateDailySheetsDateAxis() {
-  updateSheetsDateAxis(updateDetails.slice(0, 2));
+  updateSheetsDateAxis(UPDATE_DETAILS.slice(0, 2));
 }
 
 function updateWeeklySheetsDateAxis() {
-  updateSheetsDateAxis(updateDetails.slice(2, 6));
+  updateSheetsDateAxis(UPDATE_DETAILS.slice(2, 6));
 }
 
 function updateMonthlySheetsDateAxis() {
-  updateSheetsDateAxis(updateDetails.slice(6, 10));
+  updateSheetsDateAxis(UPDATE_DETAILS.slice(6, 10));
 }
 
 function updateSheetsDateAxis(details) {
   details.forEach((detail, _) => {
     const sheet = sApp.getSheetByName(detail.sheetName);
-    SheetManagementUtils.populateDatesUntil(sheet, detail.dateMode, endDate);
+    SheetManagementUtils.populateDatesUntil(sheet, detail.dateMode, END_DATE);
   });
 }
 
-/* expandSheets expands sheets that need expanding to appropriate lengths */
+/* expandSheets function expands derived data sheets automatically.
+   For example calculations are expanded in SaaVi sheet. */
 function expandSheets() {
-  const expandables = updateDetails.slice(2, 10);
+  const expandables = UPDATE_DETAILS.slice(2, 10);
   expandables.forEach((detail, _) => {
     const sheet = sApp.getSheetByName(detail.sheetName);
-    SheetManagementUtils.expandSheetRightTo(sheet, detail.dateMode, endDate);
+    SheetManagementUtils.expandSheetRightTo(sheet, detail.dateMode, END_DATE);
   });
 }
 
-/* markCurrentDate changes green line to appropriate place. */
+/* markCurrentDate updates green line to current date. */
 function markCurrentDates() {
   const now = new Date();
-  // Add 5 hours to reduce problems with timezones
-  now.setHours(now.getHours() + 5);
-  updateDetails.forEach((detail, _) => {
+  UPDATE_DETAILS.forEach((detail, _) => {
     const sheet = sApp.getSheetByName(detail.sheetName);
     SheetManagementUtils.markCurrentDate(sheet, detail.dateMode, now);
   });
 }
 
-/* Grouping helper functions */
+/* Grouping helper functions
+   Can be used for collapsing or expanding all groups. */
 function collapseAllGroups() {
   const sheet = sApp.getActiveSheet();
   sheet.getRange(1, 1, sheet.getMaxRows() - 1, sheet.getMaxColumns() - 1).activate();
   sheet.collapseAllColumnGroups();
+  Utils.Log.info(`Pienennettiin kaikki ryhmät taulukosta: "${sheet.getName()}" onnistuneesti.`);
 };
 
 function expandAllGroups() {
   const sheet = sApp.getActiveSheet();
   sheet.getRange(1, 1, sheet.getMaxRows() - 1, sheet.getMaxColumns() - 1).activate();
   sheet.expandAllColumnGroups();
+  Utils.Log.info(`Avattiin kaikki ryhmät taulukosta: "${sheet.getName()}" onnistuneesti.`);
 };
 
-/* Maintenance functions */
+/* Maintenance functions
+   resetGroupings function removes all groups from a sheet. */
 function resetGroupings() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.alert(
@@ -124,7 +87,7 @@ function resetGroupings() {
     return;
   }
   
-  const cell = RemeoUtils.getCellSettingByKey("Päivämäärien aloitus solu");
+  const cell = Utils.Settings.getCellByKey(START_DATE_CELL_SETTING_NAME);
   const sheet = sApp.getActiveSheet();
   SheetManagementUtils.resetGrouping(sheet, cell);
 }
