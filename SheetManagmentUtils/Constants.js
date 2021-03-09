@@ -1,5 +1,7 @@
-/* Add functions to date objects in this library */
-/***************************************************/
+/* Add functions to date objects in this library.
+   These function would be better somewhere else,
+   but they can't be moved due to App Script restrictions */
+/*******************************************************************************************/
 // c
 
 /**
@@ -36,6 +38,7 @@ Date.prototype.getWeek = function() {
 	return weeknum;
 };
 
+// Return date of next monday, unless current date is monday
 Date.prototype.getNextMonday = function() {
   // Loop until first day of week
   let newDate = new Date(this);
@@ -45,6 +48,8 @@ Date.prototype.getNextMonday = function() {
   return newDate;
 }
 
+
+// Return date of next month, unless current date is 1 day of the month
 Date.prototype.getNextMonth = function() {
   // Loop until it is next 1st day of month
   let newDate = new Date(this);
@@ -53,17 +58,22 @@ Date.prototype.getNextMonth = function() {
   }
   return newDate;
 }
-/***************************************************/
+/*******************************************************************************************/
 
+// Different date modes, that are currently supported
 var DATE_MODE = {
   DAY: "day",
   WEEK: "week",
   MONTH: "month"
 }
 
+// Month names used for printing
 const MONTHS = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu",
                 "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"]
 
+// Function initializes constants that can be downloaded from the settings
+// Constants are lazely donwloaded to speed up start up time, because settings
+// operations are expensive.
 let INITIALIZED = false;
 function initialize() {
   if (INITIALIZED) {
@@ -74,6 +84,7 @@ function initialize() {
   WAREHOUSE_START_CELL_SETTING = Utils.Settings.getCellByKey("Varaston arvon solu");
   START_DATE_CELL_SETTING = Utils.Settings.getCellByKey("Päivämäärien aloitus solu");
   START_DATE_SETTING = new Date(Utils.Settings.getDateByKey("Aloitus päivämäärä"));
+  CURRENT_DATE_COLOR = Utils.Settings.getByKey("Nykyisen päivän väri")[0];
 }
 
 const LAST_DATE_PREFIX = "LAST_DATE_";

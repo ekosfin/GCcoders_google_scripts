@@ -40,7 +40,8 @@ function updateSheetsDateAxis(details) {
   });
 }
 
-/* expandSheets expands sheets that need expanding to appropriate lengths */
+/* expandSheets function expands derived data sheets automatically.
+   For example calculations are expanded in SaaVi sheet. */
 function expandSheets() {
   const expandables = UPDATE_DETAILS.slice(2, 10);
   expandables.forEach((detail, _) => {
@@ -49,7 +50,7 @@ function expandSheets() {
   });
 }
 
-/* markCurrentDate changes green line to appropriate place. */
+/* markCurrentDate updates green line to current date. */
 function markCurrentDates() {
   const now = new Date();
   UPDATE_DETAILS.forEach((detail, _) => {
@@ -58,20 +59,24 @@ function markCurrentDates() {
   });
 }
 
-/* Grouping helper functions */
+/* Grouping helper functions
+   Can be used for collapsing or expanding all groups. */
 function collapseAllGroups() {
   const sheet = sApp.getActiveSheet();
   sheet.getRange(1, 1, sheet.getMaxRows() - 1, sheet.getMaxColumns() - 1).activate();
   sheet.collapseAllColumnGroups();
+  Utils.Log.info(`Pienennettiin kaikki ryhmät taulukosta: "${sheet.getName()}" onnistuneesti.`);
 };
 
 function expandAllGroups() {
   const sheet = sApp.getActiveSheet();
   sheet.getRange(1, 1, sheet.getMaxRows() - 1, sheet.getMaxColumns() - 1).activate();
   sheet.expandAllColumnGroups();
+  Utils.Log.info(`Avattiin kaikki ryhmät taulukosta: "${sheet.getName()}" onnistuneesti.`);
 };
 
-/* Maintenance functions */
+/* Maintenance functions
+   resetGroupings function removes all groups from a sheet. */
 function resetGroupings() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.alert(
@@ -82,7 +87,7 @@ function resetGroupings() {
     return;
   }
   
-  const cell = Utils.Cell.getCellSettingByKey("Päivämäärien aloitus solu");
+  const cell = Utils.Cell.getCellSettingByKey(START_DATE_CELL_SETTING_NAME);
   const sheet = sApp.getActiveSheet();
   SheetManagementUtils.resetGrouping(sheet, cell);
 }

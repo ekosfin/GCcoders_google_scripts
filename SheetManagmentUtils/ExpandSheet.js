@@ -1,3 +1,4 @@
+// Expand sheet formulas to right
 function expandSheetRightTo(sheet, dateMode, endDate) {
   initialize();
   checkAndUpdateSpace(sheet, endDate);

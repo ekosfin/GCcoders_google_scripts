@@ -15,6 +15,7 @@ function timeDifferenceInMonths(startDate, endDate) {
   return months;
 }
 
+// Get amount of columns between start day and desired end date
 function getColumnAmountByEndDate(dateMode, endDate) {
   initialize();
   switch (dateMode) {
@@ -29,6 +30,7 @@ function getColumnAmountByEndDate(dateMode, endDate) {
   }
 }
 
+// Check that there is enough space to fit endDate properly
 function checkAndUpdateSpace(sheet, dateMode, endDate) {
   initialize();
   // Plus 1 just to be sure that space is large enough
@@ -40,6 +42,7 @@ function checkAndUpdateSpace(sheet, dateMode, endDate) {
   }
 }
 
+// Get cell (column) value based on the desired date
 function getCellByDate(dateMode, date) {
   initialize();
   const difference = getColumnAmountByEndDate(dateMode, date);

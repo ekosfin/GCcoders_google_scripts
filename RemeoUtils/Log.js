@@ -1,4 +1,5 @@
 class Log {
+  // Create log entry into log sheet
   static log(sApp, level, message) {
     const logSheet = sApp.getSheetByName(LOG_SHEET_NAME);
     const emptyRow = Cell.getFirstEmptyRow(logSheet);

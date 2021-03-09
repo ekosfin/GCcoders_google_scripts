@@ -1,3 +1,5 @@
+// Converts all Excel files to Google spreadsheet files in Pinja folder and
+// removes old Excel files.
 // https://stackoverflow.com/questions/56063156/script-to-convert-xlsx-to-google-sheet-and-move-converted-file
 function convertExcelFilesToSheets_() {
   const folder = DriveApp.getFolderById(PINJA_FOLDER_ID);
@@ -14,10 +16,13 @@ function convertExcelFilesToSheets_() {
       Drive.Files.insert(newFile, blob, {convert: true});
       // Remove old xlsx file
       Drive.Files.remove(file.getId());
+      Utils.Log.info(`Muutettiin tiedosto: "${fileName}" Excel muodosta spreadsheet muotoon onnistuneesti.`);
     }
   }
 }
 
+// Load all spreadsheet files in Pinja folder and import data from them
+// using importPinjaData_ function. Add results to the list.
 function importPinjasFromFolder_(productList) {
   const folder = DriveApp.getFolderById(PINJA_FOLDER_ID);
   const files = folder.getFiles();
@@ -27,8 +32,8 @@ function importPinjasFromFolder_(productList) {
     const mimeType = file.getMimeType();
     const fileId = file.getId();
 
-    // Convert excel files to sheet files
-    if (mimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+    // Skip non spreadsheet files
+    if (mimeType != "application/vnd.google-apps.spreadsheet") {
       continue
     }
 
@@ -49,17 +54,21 @@ function mergeMultipleResults_(fileResults) {
 
   // Use first file as basis for merge
   const merged = fileResults[0];
-  for (let fileIndex = 0; fileIndex < fileResults.length; fileIndex++) {
+  // Go through all files
+  for (let fileIndex = 1; fileIndex < fileResults.length; fileIndex++) {
+    // Go through all products in those files
     for (const product in fileResults[fileIndex]) {
       const productData = fileResults[fileIndex][product]
       if (!Object.prototype.hasOwnProperty.call(fileResults[fileIndex], product)) {
           continue;
       }
+      // Go through all directions (in, out) in those products
       for (const direction in productData) {
         const directionData = productData[direction];
         if (!Object.prototype.hasOwnProperty.call(productData, direction)) {
             continue;
         }
+        // Go through all date entries in dataset
         for (const date in directionData) {
           const dateData = directionData[date];
           if (!Object.prototype.hasOwnProperty.call(directionData, date)) {
@@ -74,6 +83,7 @@ function mergeMultipleResults_(fileResults) {
       }
     }
   }
+  Utils.Log.info(`Yhsitettiin Pinjan tiedostot onnistuneesti ${fileResults.length} tiedostosta.`);
   return merged;
 }
 

@@ -1,4 +1,5 @@
 class Cell {
+  // Get column index based on the sheet and string and title row
   static getColumnByTitle(sheet, title, titleRow) {
     const textFinder = sheet.createTextFinder(title)
     const columnCandidates = textFinder.findAll();
@@ -25,6 +26,7 @@ class Cell {
     return results;
   }
 
+  // Get first row that has empty A column
   static getFirstEmptyRow(sheet) {
     const column = sheet.getRange('A:A');
     const values = column.getValues();

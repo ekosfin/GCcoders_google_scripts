@@ -1,4 +1,5 @@
 class Settings {
+  // Retrieve a setting by key
   static getByKey(sApp, settingKey) {
     const settingsSheet = sApp.getSheetByName(SETTINGS_SHEET_NAME);
 
@@ -32,6 +33,7 @@ class Settings {
     return parameterValues;
   }
 
+  // Retrieve setting by key and pack it into cell object
   static getCellByKey(sApp, settingKey) {
     try {
       const values = Settings.getByKey(sApp, settingKey);
@@ -39,7 +41,12 @@ class Settings {
       const cellRow = parseInt(values[1]);
       const cellColumn = sApp.getRange(values[0] + values[1]).getColumn();
       const cellColumnLetter = Cell.convertColumnIndexToLetter(cellColumn);
-      const cell = {row: cellRow, column: cellColumn, columnLetter: cellColumnLetter, a1: cellA1};
+      const cell = {
+        row: cellRow,
+        column: cellColumn,
+        columnLetter: cellColumnLetter,
+        a1: cellA1
+      };
       return cell;
     }
     catch (err) {

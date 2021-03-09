@@ -1,3 +1,5 @@
+// Various constants mainly for accessing settings properly
+
 const TITLE_ROW = 1;
 const LOG_SHEET_NAME = "Logi";
 const TIME_TITLE = "Aikaleima";
