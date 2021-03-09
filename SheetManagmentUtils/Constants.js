@@ -9,7 +9,7 @@
  * @param int dowOffset
  * @return int
  */
-Date.prototype.getWeek = function () {
+Date.prototype.getWeek = function() {
   /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.epoch-calendar.com */
 
 	const newYear = new Date(this.getFullYear(),0,1);
@@ -35,19 +35,6 @@ Date.prototype.getWeek = function () {
 	}
 	return weeknum;
 };
-
-/*
-Date.prototype.getWeek = function() {
-  let date = new Date(this.getTime());
-  date.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-  // January 4 is always in week 1.
-  let week1 = new Date(date.getFullYear(), 0, 4);
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                        - 3 + (week1.getDay() + 6) % 7) / 7);
-}*/
 
 Date.prototype.getNextMonday = function() {
   // Loop until first day of week
@@ -83,9 +70,10 @@ function initialize() {
     return
   }
   INITIALIZED = true;
-  WAREHOUSE_START_CELL_SETTING = RemeoUtils.getCellSettingByKey("Varaston arvon solu");
-  START_DATE_CELL_SETTING = RemeoUtils.getCellSettingByKey("Päivämäärien aloitus solu");
-  START_DATE_SETTING = new Date(RemeoUtils.getDateByKey("Aloitus päivämäärä"));
+  Utils = new RemeoUtils.Instance();
+  WAREHOUSE_START_CELL_SETTING = Utils.Settings.getCellByKey("Varaston arvon solu");
+  START_DATE_CELL_SETTING = Utils.Settings.getCellByKey("Päivämäärien aloitus solu");
+  START_DATE_SETTING = new Date(Utils.Settings.getDateByKey("Aloitus päivämäärä"));
 }
 
 const LAST_DATE_PREFIX = "LAST_DATE_";

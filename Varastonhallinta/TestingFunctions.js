@@ -26,7 +26,7 @@ function testExpandSheetRightFrom() {
 }
 
 function testResetGrouping() {
-  const cell = RemeoUtils.getCellSettingByKey("Päivämäärien aloitus solu");
+  const cell = Utils.Settings.getCellSettingByKey("Päivämäärien aloitus solu");
   const sheet = sApp.getSheetByName("Saa Vi");
   SheetManagementUtils.resetGrouping(sheet, cell);
 }

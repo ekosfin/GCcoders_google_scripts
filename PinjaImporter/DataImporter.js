@@ -2,7 +2,7 @@ function getTitleRow_(sheet) {
   const textFinder = sheet.createTextFinder(PINJA_TITLE_ROW_IDENTIFIER);
   const candidates = textFinder.findAll();
   if (candidates.length == 0) {
-    //RemeoUtils.error(sheet, `Otsake rivin sijaintia ei löytynyt avaimella ${TITLE_ROW_IDENTIFIER}`);
+    Utils.Log.error(`Otsake rivin sijaintia ei löytynyt avaimella ${TITLE_ROW_IDENTIFIER}`);
     throw ("couldn't find title row with the specified key")
   }
   return candidates[0].getRow();
@@ -27,9 +27,9 @@ function getProductAproximation_(productList, string) {
 
 function scrapeData_(sheet, titleRow, productList) {
   // Minus 1, because in memory table indexing starts from zero
-  const productColumn = RemeoUtils.getColumnByTitle(sheet, PINJA_PRODUCT_COLUMN_IDENTIFIER, titleRow) - 1;
-  const typeColumn = RemeoUtils.getColumnByTitle(sheet, PINJA_TYPE_COLUMN_IDENTIFIER, titleRow) - 1;
-  const weightColumn = RemeoUtils.getColumnByTitle(sheet, PINJA_WEIGHT_COLUMN_IDENTIFIER, titleRow) - 1;
+  const productColumn = Utils.Cell.getColumnByTitle(sheet, PINJA_PRODUCT_COLUMN_IDENTIFIER, titleRow) - 1;
+  const typeColumn = Utils.Cell.getColumnByTitle(sheet, PINJA_TYPE_COLUMN_IDENTIFIER, titleRow) - 1;
+  const weightColumn = Utils.Cell.getColumnByTitle(sheet, PINJA_WEIGHT_COLUMN_IDENTIFIER, titleRow) - 1;
 
   // Read whole table into memory to speed up reading
   const table = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).getValues();

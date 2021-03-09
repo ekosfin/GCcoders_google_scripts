@@ -1,5 +1,5 @@
 function getProductList() {
-  const productStartCell = RemeoUtils.getCellSettingByKey("Tuotelistan aloitus solu");
+  const productStartCell = Utils.Settings.getCellByKey("Tuotelistan aloitus solu");
   const sheet = sApp.getSheetByName("VaakaArvo");
   const rawProductList = sheet.getRange(`${productStartCell.a1}:${productStartCell.column}${sheet.getMaxRows()}`).getValues();
   let productList = [];
@@ -12,7 +12,7 @@ function getProductList() {
 }
 
 function placePinjaData(sheet, direction, productList, importedData) {
-  const startCell = RemeoUtils.getCellSettingByKey("Datan aloitus solu");
+  const startCell = Utils.Settings.getCellByKey("Datan aloitus solu");
   const table = sheet.getRange(startCell.row, startCell.column, sheet.getMaxRows() - startCell.row, sheet.getMaxColumns() - startCell.column).getValues();
   const changes = [];
   productList.every((product, productRow) => {
@@ -26,7 +26,7 @@ function placePinjaData(sheet, direction, productList, importedData) {
       const dateColumn = SheetManagementUtils.getCellByDate(SheetManagementUtils.DATE_MODE.DAY, dateObject).column - startCell.column;
       // Check that new data is inside date range
       if (!(productRow < table.length && dateColumn < table[0].length)) {
-        RemeoUtils.error("Pinjasta tuotu data ylitti taulukon koon. Ovathan päivät päivittyneet oikein?");
+        Utils.Log.error("Pinjasta tuotu data ylitti taulukon koon. Ovathan päivät päivittyneet oikein?");
         return false;
       }
 

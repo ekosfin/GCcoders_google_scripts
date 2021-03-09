@@ -36,7 +36,7 @@ function checkAndUpdateSpace(sheet, dateMode, endDate) {
   if (sheet.getMaxColumns() < columnsRequired) {
     const neededAdditionalColumns = columnsRequired - sheet.getMaxColumns();
     sheet.insertColumnsAfter(sheet.getMaxColumns(), neededAdditionalColumns);
-    RemeoUtils.info(`Lisättiin ${neededAdditionalColumns} saraketta päivämäärien mahduttamiseksi.`);
+    Utils.Log.info(`Lisättiin ${neededAdditionalColumns} saraketta päivämäärien mahduttamiseksi.`);
   }
 }
 
@@ -44,7 +44,7 @@ function getCellByDate(dateMode, date) {
   initialize();
   const difference = getColumnAmountByEndDate(dateMode, date);
   const column = START_DATE_CELL_SETTING.column + difference;
-  const columnLetter = RemeoUtils.convertColumnIndexToLetter(column);
+  const columnLetter = Utils.Cell.convertColumnIndexToLetter(column);
   const cell = {row: START_DATE_CELL_SETTING.row,
                 column: column,
                 columnLetter: columnLetter,

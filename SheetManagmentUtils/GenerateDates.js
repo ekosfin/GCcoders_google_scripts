@@ -90,8 +90,8 @@ function updateGrouping_(sheet, columns, maxDepth) {
       if (sheet.getColumnGroupDepth(columns[index - 1] + 1) >= maxDepth) {
         continue
       }
-      const firstColumn = RemeoUtils.convertColumnIndexToLetter(columns[index - 1] + 1);
-      const lastColumn = RemeoUtils.convertColumnIndexToLetter(columns[index] - 1);
+      const firstColumn = Utils.Cell.convertColumnIndexToLetter(columns[index - 1] + 1);
+      const lastColumn = Utils.Cell.convertColumnIndexToLetter(columns[index] - 1);
       sheet.getRange(`${firstColumn}:${lastColumn}`).shiftColumnGroupDepth(1);
   }
 }
@@ -131,5 +131,5 @@ function populateDatesUntil(sheet, dateMode, endDate) {
   checkAndUpdateSpace(sheet, endDate);
   generateDates_(sheet, dateMode, endDate);
   hideUnusedColumns_(sheet, dateMode, endDate);
-  RemeoUtils.info(`Päivitettiin päivä tiedot taulukossa "${sheet.getName()}"`);
+  Utils.Log.info(`Päivitettiin päivä tiedot taulukossa "${sheet.getName()}"`);
 }

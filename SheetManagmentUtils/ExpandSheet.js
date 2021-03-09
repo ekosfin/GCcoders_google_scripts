@@ -8,5 +8,5 @@ function expandSheetRightTo(sheet, dateMode, endDate) {
   sheet.getRange(startCellA1).activate();
   sheet.getActiveRange().autoFill(sheet.getRange(endCellA1), SpreadsheetApp.AutoFillSeries.DEFAULT_SERIES);
   sheet.getRange(`${WAREHOUSE_START_CELL_SETTING.a1}:${endCell.columnLetter}`).setBackground('#ffffff');
-  RemeoUtils.info(`Jatkettiin kaavoja taulokossa: "${sheet.getName()}" uuden tiedon mahduttamiseksi.`);
+  Utils.Log.info(`Jatkettiin kaavoja taulokossa: "${sheet.getName()}" uuden tiedon mahduttamiseksi.`);
 };
