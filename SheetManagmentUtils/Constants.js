@@ -9,7 +9,7 @@
  * @param int dowOffset
  * @return int
  */
-Date.prototype.getUTCWeek = function () {
+Date.prototype.getWeek = function () {
   /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.epoch-calendar.com */
 
 	const newYear = new Date(this.getFullYear(),0,1);
@@ -37,7 +37,7 @@ Date.prototype.getUTCWeek = function () {
 };
 
 /*
-Date.prototype.getUTCWeek = function() {
+Date.prototype.getWeek = function() {
   let date = new Date(this.getTime());
   date.setHours(0, 0, 0, 0);
   // Thursday in current week decides the year.
@@ -49,20 +49,20 @@ Date.prototype.getUTCWeek = function() {
                         - 3 + (week1.getDay() + 6) % 7) / 7);
 }*/
 
-Date.prototype.getUTCNextMonday = function() {
+Date.prototype.getNextMonday = function() {
   // Loop until first day of week
   let newDate = new Date(this);
-  while (newDate.getUTCDay() != 1) {
-    newDate.setUTCDate(newDate.getUTCDate() + 1);
+  while (newDate.getDay() != 1) {
+    newDate.setDate(newDate.getDate() + 1);
   }
   return newDate;
 }
 
-Date.prototype.getUTCNextMonth = function() {
+Date.prototype.getNextMonth = function() {
   // Loop until it is next 1st day of month
   let newDate = new Date(this);
-  while (newDate.getUTCDate() != 1) {
-    newDate.setUTCDate(newDate.getUTCDate() + 1);
+  while (newDate.getDate() != 1) {
+    newDate.setDate(newDate.getDate() + 1);
   }
   return newDate;
 }

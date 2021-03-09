@@ -41,8 +41,7 @@ function scrapeData_(sheet, titleRow, productList) {
     if (newDateCandidate != null) {
       const newDateSplit = newDateCandidate[0].split(".");
       // Months start from 0
-      currentDate = new Date(newDateSplit[2], newDateSplit[1] - 1, newDateSplit[0]);
-      currentDate.setUTCHours(12);
+      currentDate = new Date(newDateSplit[2], newDateSplit[1] - 1, newDateSplit[0], 5)
       currentDate = currentDate.toUTCString();
       if (!results[currentDate]) {
         results[currentDate] = [];

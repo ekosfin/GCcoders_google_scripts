@@ -25,7 +25,7 @@ function generateDates_(sheet, dateMode, endDate) {
   let date = new Date(START_DATE_SETTING);
   // If mode is week, start from the first full week
   if (dateMode == DATE_MODE.WEEK) {
-    date = date.getUTCNextMonday();
+    date = date.getNextMonday();
   }
 
   // Initialize date earlier, so loop will stay consistent.
@@ -38,7 +38,7 @@ function generateDates_(sheet, dateMode, endDate) {
     date.setDate(date.getDate() + changeAmount);
     // Move date to next month if generating dates by month
     if (dateMode == DATE_MODE.MONTH) {
-      date = date.getUTCNextMonth();
+      date = date.getNextMonth();
     }
 
     memory = handleWeekMonthYearChanges_(date, index, memory, sheetData);
@@ -65,22 +65,22 @@ function handleWeekMonthYearChanges_(date, index, memory, sheetData) {
   sheetData[2][index] = new Date(date);
 
   // Print also week number, if it is monday
-  if (date.getUTCDay() == 1) {
-    sheetData[1][index] = date.getUTCWeek();
+  if (date.getDay() == 1) {
+    sheetData[1][index] = date.getWeek();
   }
 
   // Print also month, if month has changed
-  if (date.getUTCMonth() != memory.previousMonth) {
-    memory.previousMonth = date.getUTCMonth();
-    sheetData[0][index] = MONTHS[date.getUTCMonth()];
+  if (date.getMonth() != memory.previousMonth) {
+    memory.previousMonth = date.getMonth();
+    sheetData[0][index] = MONTHS[date.getMonth()];
     memory.monthGroupColumns.push(START_DATE_CELL_SETTING.column + index);
   }
 
   // Print also year, if year has changed
-  if (date.getUTCFullYear() != memory.previousYear) {
-    memory.previousYear = date.getUTCFullYear();
+  if (date.getFullYear() != memory.previousYear) {
+    memory.previousYear = date.getFullYear();
     memory.yearGroupColumns.push(START_DATE_CELL_SETTING.column + index);
-    sheetData[0][index] += "/" + date.getUTCFullYear();
+    sheetData[0][index] += "/" + date.getFullYear();
   }
   return memory
 }
@@ -99,7 +99,7 @@ function updateGrouping_(sheet, columns, maxDepth) {
 // Show new cells
 function expandPreviousHiding_(sheet, columnsRequired) {
   let previousHiding = parseInt(documentProperties.getProperty(LAST_HIDE_PREFIX + sheet.getName()));
-  if (previousHiding != undefined && columnsRequired < sheet.getMaxColumns()) {
+  if (previousHiding && columnsRequired < sheet.getMaxColumns()) {
     // If nothing new will be shown
     if (columnsRequired - previousHiding) {
       return;

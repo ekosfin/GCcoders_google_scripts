@@ -1,18 +1,22 @@
 {
-  "timeZone": "America/New_York",
-  "dependencies": {
-    "enabledAdvancedServices": [{
-      "userSymbol": "Drive",
-      "serviceId": "drive",
-      "version": "v2"
-    }],
-    "libraries": [{
-      "userSymbol": "RemeoUtils",
-      "libraryId": "1qoJ3uOWvzgoh_hJC04uw5OE75Nr726ofEuiYDt2mVrYyCbNvvXOL7ME6",
-      "version": "0",
-      "developmentMode": true
-    }]
-  },
+  "timeZone": "Europe/Helsinki",
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Drive",
+        "serviceId": "drive",
+        "version": "v2"
+      }
+    ],
+    "libraries": [
+      {
+        "userSymbol": "RemeoUtils",
+        "version": "0",
+        "libraryId": "1nF7w7f-VmgBVUFpPBVDOAVch_d2jLIEoc9COzxX2_j7zjZpOjIh-TgV4",
+        "developmentMode": true
+      }
+    ]
+  }
 }

@@ -1,12 +1,6 @@
 {
-  "timeZone": "America/New_York",
-  "dependencies": {
-    "libraries": [{
-      "userSymbol": "BetterLog",
-      "libraryId": "1DSyxam1ceq72bMHsE6aOVeOl94X78WCwiYPytKi7chlg4x5GqiNXSw0l",
-      "version": "27"
-    }]
-  },
+  "timeZone": "Europe/Helsinki",
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "dependencies": {}
 }

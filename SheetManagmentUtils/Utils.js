@@ -10,8 +10,8 @@ function timeDifferenceInWeeks(startDate, endDate) {
 
 function timeDifferenceInMonths(startDate, endDate) {
   let months;
-  months = (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12;
-  months += endDate.getUTCMonth() - startDate.getUTCMonth();
+  months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+  months += endDate.getMonth() - startDate.getMonth();
   return months;
 }
 
@@ -22,7 +22,7 @@ function getColumnAmountByEndDate(dateMode, endDate) {
       return timeDifferenceInDays(START_DATE_SETTING, endDate)
     case DATE_MODE.WEEK:
       // Shift start date to first monday
-      const startDate = START_DATE_SETTING.getUTCNextMonday();
+      const startDate = START_DATE_SETTING.getNextMonday();
       return timeDifferenceInWeeks(startDate, endDate)
     case DATE_MODE.MONTH:
       return timeDifferenceInMonths(START_DATE_SETTING, endDate)
