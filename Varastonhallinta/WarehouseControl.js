@@ -87,7 +87,7 @@ function resetGroupings() {
     return;
   }
   
-  const cell = Utils.Cell.getCellSettingByKey(START_DATE_CELL_SETTING_NAME);
+  const cell = Utils.Settings.getCellByKey(START_DATE_CELL_SETTING_NAME);
   const sheet = sApp.getActiveSheet();
   SheetManagementUtils.resetGrouping(sheet, cell);
 }

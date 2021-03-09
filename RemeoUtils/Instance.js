@@ -11,13 +11,12 @@ var Instance = class Instance {
     this.Cell = {
       getColumnByTitle: (sheet, title, titleRow) => {return Cell.getColumnByTitle(sheet, title, titleRow);},
       getRowByTitle: (sheet, title, titleColumn) => {return Cell.getRowByTitle(sheet, title, titleColumn);},
-      getFirstEmptyRow: (sheet) => {return Cell.getFirstEmptyRow(sheet);},
       convertColumnIndexToLetter: (column) => {return Cell.convertColumnIndexToLetter(column);}
     }
     this.Settings = {
       getByKey: (settingKey) => {return Settings.getByKey(this.sApp, settingKey);},
       getCellByKey: (settingKey) => {return Settings.getCellByKey(this.sApp, settingKey);},
-      getDateByKey: (settingKey) => {return Settings.getDateByKey(this.sApp, settingKey);}
+      getDateByKey: (settingKey) => {return Settings.getDateByKey(this.sApp, settingKey) ;}
     }
   }
   setSApp(sApp) {
