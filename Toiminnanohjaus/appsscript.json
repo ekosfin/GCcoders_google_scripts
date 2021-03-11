@@ -1,6 +1,20 @@
 {
   "timeZone": "America/New_York",
   "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "RemeoUtils",
+        "version": "0",
+        "libraryId": "1nF7w7f-VmgBVUFpPBVDOAVch_d2jLIEoc9COzxX2_j7zjZpOjIh-TgV4",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "BetterLog",
+        "version": "27",
+        "libraryId": "1DSyxam1ceq72bMHsE6aOVeOl94X78WCwiYPytKi7chlg4x5GqiNXSw0l",
+        "developmentMode": false
+      }
+    ]
   },
   "webapp": {
     "access": "ANYONE_ANONYMOUS",

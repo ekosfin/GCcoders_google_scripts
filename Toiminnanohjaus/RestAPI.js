@@ -2,8 +2,8 @@
 // CONSTANTS
 /************************************************** */
 const SS_ID = "REPLACE_SS_ID";
-const SCHEDULE_SHEET_NAME = 'Nykyinen viikko';
-const MATERIAL_SHEET_NAME = 'Kuljettajat & kohteet';
+const SCHEDULE_SHEET_NAME = "Nykyinen viikko";
+const MATERIAL_SHEET_NAME = "Kuljettajat & kohteet";
 
 const ss = SpreadsheetApp.openById(SS_ID);
 RemeoUtils.setSApp(ss);
@@ -38,15 +38,18 @@ function doPost(e) {
   Logger.log(JSON.stringify(e));
 
   let outputJSON = "";
-  if (params.hasOwnProperty('route') && params.route == 'login') {
+  if (params.hasOwnProperty("route") && params.route == "login") {
     outputJSON = loginRoute(e);
-    return ContentService.createTextOutput(outputJSON).setMimeType(ContentService.MimeType.JSON);
-
-  } else if(params.hasOwnProperty('route') && params.route == 'watch') {
+    return ContentService.createTextOutput(outputJSON).setMimeType(
+      ContentService.MimeType.JSON
+    );
+  } else if(params.hasOwnProperty("route") && params.route == "watch") {
     outputJSON = getSchedule(e);
-    return ContentService.createTextOutput(outputJSON).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(outputJSON).setMimeType(
+      ContentService.MimeType.JSON
+    );
 
-  // } else if (params.hasOwnProperty('route') && params.route == 'edit') {
+  // } else if (params.hasOwnProperty("route") && params.route == "edit") {
   //   let response = editRoute(e);
   //   return ContentService.createTextOutput(response);
 
@@ -59,10 +62,10 @@ function doPost(e) {
 function loginRoute(e) {
   let data = e.postData.contents;
   data = JSON.parse(data);
-  let outputJSON = ""
+  let outputJSON = "";
 
   // If user wants to get edit rights
-  if(data.hasOwnProperty('edit') && data.edit == EDIT_PW) {
+  if (data.hasOwnProperty("edit") && data.edit == EDIT_PW) {
     let accessToken = createJwt({
       JWT_KEY,
       expiresInHours: 6, // expires in 6 hours
@@ -70,12 +73,12 @@ function loginRoute(e) {
         rights: "edit"
       },
     });
-    outputJSON = {JWT: accessToken, message: "Success!"};
+    outputJSON = { JWT: accessToken, message: "Success!" };
     outputJSON = JSON.stringify(outputJSON);
-    Logger.log('Log in path was used with edit rights.');
+    Logger.log("Log in path was used with edit rights.");
 
   // If user wants read only rights so right to see the sheet.
-  } else if (data.hasOwnProperty('watch') && data.watch == WATCH_PW) {
+  } else if (data.hasOwnProperty("watch") && data.watch == WATCH_PW) {
     let accessToken = createJwt({
       JWT_KEY,
       expiresInHours: 6, // expires in 6 hours
@@ -83,26 +86,28 @@ function loginRoute(e) {
         rights: "watch"
       },
     });
-    outputJSON = {JWT: accessToken, message: "Success!"};
+    outputJSON = { JWT: accessToken, message: "Success!" };
     outputJSON = JSON.stringify(outputJSON);
-    Logger.log('Log in path was used with watch rights.');
+    Logger.log("Log in path was used with watch rights.");
 
   // Invalid request, credentials and so on... -> So this is the error path.
   } else {
-    Logger.log('Log in path was used. Credentials did not match.');
-    outputJSON = {JWT: null, message: "Failure!"};
+    Logger.log("Log in path was used. Credentials did not match.");
+    outputJSON = { JWT: null, message: "Failure!" };
     outputJSON = JSON.stringify(outputJSON);
   }
+
   return outputJSON;
 }
 
 function getSchedule(e) {
-  // Authenticate user
   let pData = e.postData.contents;
   pData = JSON.parse(pData);
-  if(pData.hasOwnProperty('jwt') ) {
+
+  // Authenticate user
+  if (pData.hasOwnProperty("jwt") ) {
     let parsedJWT = parseJwt(pData.jwt, JWT_KEY);
-    if(parsedJWT.valid && parsedJWT.data.rights == ('watch' || 'edit')) {
+    if (parsedJWT.valid && parsedJWT.data.rights == ("watch" || "edit")) {
       
       let weekLength = 0;
       let materials = [];
@@ -142,7 +147,7 @@ function getSchedule(e) {
         if (cell.getValue() == "Värit:") {
           cell = cell.offset(1, 0);
           while (cell.getValue() != "") {
-            colorSettings[[cell.getValue().substring(0, cell.getValue().indexOf(":"))]] = cell.getValue().split(':').pop();
+            colorSettings[[cell.getValue().substring(0, cell.getValue().indexOf(":"))]] = cell.getValue().split(":").pop();
             cell = cell.offset(1, 0);
           }
           break
@@ -173,19 +178,19 @@ function getSchedule(e) {
           for (let i = 0; i < weekLength; i++) {
             materialRow["data"].push([]);
             // Fetch data if there is any
-            if (cell.getDisplayValue().replace(/[\s\n-]+/gi, '') != "") {
+            if (cell.getDisplayValue().replace(/[\s\n-]+/gi, "") != "") {
               cell = cell.offset(1, 0);
               if (cell.getDisplayValue().trim() != "") {
-                materialRow["data"][i].push({dayItem: cell.getDisplayValue().split(' ').slice(0, 3).join(' '), 
-                                            dayInfo: cell.getDisplayValue().split(' ').slice(3).join(' '), 
-                                            color: driverColors[cell.getDisplayValue().split(' ')[0]]
+                materialRow["data"][i].push({dayItem: cell.getDisplayValue().split(" ").slice(0, 3).join(" "), 
+                                            dayInfo: cell.getDisplayValue().split(" ").slice(3).join(" "), 
+                                            color: driverColors[cell.getDisplayValue().split(" ")[0]]
                                             });
               }
               cell = cell.offset(5, 0);
               if (cell.getDisplayValue().trim() != "") {
-                materialRow["data"][i].push({dayItem: cell.getDisplayValue().split(' ').slice(0, 3).join(' '), 
-                                            dayInfo: cell.getDisplayValue().split(' ').slice(3).join(' '), 
-                                            color: driverColors[cell.getDisplayValue().split(' ')[0]]
+                materialRow["data"][i].push({dayItem: cell.getDisplayValue().split(" ").slice(0, 3).join(" "), 
+                                            dayInfo: cell.getDisplayValue().split(" ").slice(3).join(" "), 
+                                            color: driverColors[cell.getDisplayValue().split(" ")[0]]
                                             });
               }
               cell = cell.offset(-6, 0);
@@ -206,35 +211,36 @@ function getSchedule(e) {
       return outputJSON;
     }
   } 
-  Logger.log('Edit path was used. Error.');
+
+  Logger.log("Edit path was used. Error.");
   return "Failure";
 }
 
 // function editRoute(e) {
 //   let pData = e.postData.contents;
 //   pData = JSON.parse(pData);
-//   if(pData.hasOwnProperty('jwt') ) {
+//   if(pData.hasOwnProperty("jwt") ) {
 //     let parsedJWT = parseJwt(pData.jwt, JWT_KEY)
 //     if(parsedJWT.valid && parsedJWT.data.rights == "edit") {
 //       sheet.getRange(4,1).setValue(pData.string);
 //       return "success";
 //     }
 //   } 
-//   Logger.log('Error in using edit route.');
+//   Logger.log("Error in using edit route.");
 //   return "Failure";
 // }
 
 
 
 /************************************************** */
-// JWT - Source: Amit Agarwal https://www.labnol.org/code/json-web-token-201128
+// JWT Service - Source: Amit Agarwal https://www.labnol.org/code/json-web-token-201128
 /************************************************** */
 
 const createJwt = ({ JWT_KEY, expiresInHours, data = {} }) => {
   // Sign token using HMAC with SHA-256 algorithm
   const header = {
-    alg: 'HS256',
-    typ: 'JWT',
+    alg: "HS256",
+    typ: "JWT",
   };
 
   const now = Date.now();
@@ -247,14 +253,14 @@ const createJwt = ({ JWT_KEY, expiresInHours, data = {} }) => {
     iat: Math.round(now / 1000),
   };
 
-  // add user payload
+  // Add user payload
   Object.keys(data).forEach(function (key) {
     payload[key] = data[key];
   });
 
   const base64Encode = (text, json = true) => {
     const data = json ? JSON.stringify(text) : text;
-    return Utilities.base64EncodeWebSafe(data).replace(/=+$/, '');
+    return Utilities.base64EncodeWebSafe(data).replace(/=+$/, "");
   };
 
   const toSign = `${base64Encode(header)}.${base64Encode(payload)}`;
@@ -267,23 +273,23 @@ const createJwt = ({ JWT_KEY, expiresInHours, data = {} }) => {
 };
 
 const parseJwt = (jsonWebToken, JWT_KEY) => {
-  const [header, payload, signature] = jsonWebToken.split('.');
+  const [header, payload, signature] = jsonWebToken.split(".");
   const signatureBytes = Utilities.computeHmacSha256Signature(
     `${header}.${payload}`,
     JWT_KEY
   );
   const validSignature = Utilities.base64EncodeWebSafe(signatureBytes);
-  if (signature === validSignature.replace(/=+$/, '')) {
+  if (signature === validSignature.replace(/=+$/, "")) {
     const blob = Utilities.newBlob(
     Utilities.base64Decode(payload)
     ).getDataAsString();
     const { exp, ...data } = JSON.parse(blob);
     if (new Date(exp * 1000) < new Date()) {
-    return {valid: false, data: null};
+    return { valid: false, data: null };
     }
-    return {valid: true, data: data};
+    return { valid: true, data: data };
 
   } else {
-    return {valid: false, data:null};
+    return { valid: false, data: null };
   }
 };
