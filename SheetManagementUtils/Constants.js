@@ -61,14 +61,14 @@ Date.prototype.getNextMonth = function() {
 /*******************************************************************************************/
 
 // Different date modes, that are currently supported
-var DATE_MODE = {
+DATE_MODE = {
   DAY: "day",
   WEEK: "week",
   MONTH: "month"
 }
 
 // Month names used for printing
-const MONTHS = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu",
+MONTHS = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu",
                 "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"]
 
 // Function initializes constants that can be downloaded from the settings
@@ -87,8 +87,8 @@ function initialize() {
   CURRENT_DATE_COLOR = Utils.Settings.getByKey("Nykyisen päivän väri")[0];
 }
 
-const LAST_DATE_PREFIX = "LAST_DATE_";
-const LAST_HIDE_PREFIX = "LAST_HIDE_";
+LAST_DATE_PREFIX = "LAST_DATE_";
+LAST_HIDE_PREFIX = "LAST_HIDE_";
 
-const documentProperties = PropertiesService.getDocumentProperties();
-const sApp = SpreadsheetApp.getActiveSpreadsheet();
+documentProperties = PropertiesService.getDocumentProperties();
+sApp = SpreadsheetApp.getActiveSpreadsheet();
