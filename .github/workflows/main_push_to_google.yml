@@ -37,8 +37,8 @@ jobs:
       - name: Varastonhallinta push
         working-directory: ./Varastonhallinta
         run: npm run push-to-app
-      - name: SheetManagmentUtils push
-        working-directory: ./SheetManagmentUtils
+      - name: SheetManagementUtils push
+        working-directory: ./SheetManagementUtils
         run: npm run push-to-app
       - name: RemeoUtils push
         working-directory: ./RemeoUtils
