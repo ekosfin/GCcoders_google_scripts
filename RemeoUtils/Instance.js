@@ -1,7 +1,7 @@
 /* This class provides wrapper for all the utility functions.
    Wrapper is needed, because in some cases, SpreadSheetApp (sApp)
    must be updated. Otherwise sApp must be global variable */
-var Instance = class Instance {
+Instance = class Instance {
   constructor() {
     this.sApp = SpreadsheetApp.getActiveSpreadsheet();
     this.Log = {

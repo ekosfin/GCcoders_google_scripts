@@ -1,16 +1,15 @@
-class Cell {
+Cell = class Cell {
   // Get column index based on the sheet and string and title row
   static getColumnByTitle(sheet, title, titleRow) {
     const textFinder = sheet.createTextFinder(title)
     const columnCandidates = textFinder.findAll();
 
-    let results;
-    columnCandidates.forEach((columnCandidate) => {
+    for (const columnCandidate of columnCandidates) {
       if (columnCandidate.getRow() == titleRow) {
-        results = columnCandidate.getColumn();
+        return columnCandidate.getColumn();
       }
-    })
-    return results;
+    }
+    return undefined;
   }
 
   static getColumnByTitleInMemory(table, title, titleRow) {
@@ -27,13 +26,12 @@ class Cell {
     const textFinder = sheet.createTextFinder(title)
     const rowCandidates = textFinder.findAll();
 
-    let results;
-    rowCandidates.forEach((rowCandidate) => {
+    for (const rowCandidate of rowCandidates) {
       if (rowCandidate.getColumn() == titleColumn) {
-        results = rowCandidate.getRow()
+        return rowCandidate.getRow()
       }
-    })
-    return results;
+    }
+    return undefined;
   }
 
   static getRowByTitleInMemory(table, title, titleColumn) {
@@ -52,8 +50,9 @@ class Cell {
     const values = column.getValues();
     // Check is the final row full, if yes create several new rows and return
     if (values[sheet.getMaxRows() - 1][0] != "") {
-      sheet.insertRowsAfter(sheet.getMaxRows(), 1)
-      return sheet.getMaxRows();
+      const previousMaxRows = sheet.getMaxRows();
+      sheet.insertRowsAfter(sheet.getMaxRows(), LOG_INSERT_EXTRA_ROWS)
+      return previousMaxRows + 1;
     }
 
     let index = 0;

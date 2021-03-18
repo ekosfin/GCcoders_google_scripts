@@ -1,9 +1,9 @@
-class Settings {
+Settings = class Settings {
   // Retrieve a setting by key
   static getByKey(sApp, settingKey) {
-    const settingsSheet = sApp.getSheetByName(SETTINGS_SHEET_NAME);
     // Create new cache, if cache is undefined
     if (!this.tableCache) {
+      const settingsSheet = sApp.getSheetByName(SETTINGS_SHEET_NAME);
       this.tableCache = settingsSheet.getRange(1, 1, settingsSheet.getMaxRows(), settingsSheet.getMaxColumns()).getValues();
     }
 
@@ -39,24 +39,27 @@ class Settings {
 
   // Retrieve setting by key and pack it into cell object
   static getCellByKey(sApp, settingKey) {
-    try {
-      const values = Settings.getByKey(sApp, settingKey);
-      const cellA1 = values[0] + values[1];
-      const cellRow = parseInt(values[1]);
-      const cellColumn = Cell.letterToColumn(values[0]);
-      const cellColumnLetter = values[0];
-      const cell = {
-        row: cellRow,
-        column: cellColumn,
-        columnLetter: cellColumnLetter,
-        a1: cellA1
-      };
-      return cell;
+    const values = Settings.getByKey(sApp, settingKey);
+
+    // Check that first parameter contains only letters and second only numbers
+    if (values[0] == "" || values[1] == "" || !values[0].match(/\w+/) || !values[1].toString().match(/[0-9]+/)) {
+      const message = `Asetuksen: "${settingKey}" tietoja ei voitu muuttaa soluksi. ` + 
+      `Onhan ensimmäinen parametri asetettu solun kirjaimeksi ja toinen numeroksi?`;
+      Log.error(sApp, message);
+      throw message;
     }
-    catch (err) {
-      Log.error(sApp, `Asetuksen: "${settingKey}" tietoja ei voitu muuttaa soluksi. Onhan ensimmäinen parametri asetettu kirjaimeksi ja toinen numeroksi?`);
-      throw err;
-    }
+
+    const cellA1 = values[0] + values[1];
+    const cellRow = parseInt(values[1]);
+    const cellColumn = Cell.letterToColumn(values[0]);
+    const cellColumnLetter = values[0];
+    const cell = {
+      row: cellRow,
+      column: cellColumn,
+      columnLetter: cellColumnLetter,
+      a1: cellA1
+    };
+    return cell;
   }
 
   static getDateByKey(sApp, settingKey) {

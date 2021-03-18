@@ -1,16 +1,16 @@
 // Various constants mainly for accessing settings properly
 
-const TITLE_ROW = 1;
-const LOG_SHEET_NAME = "Logi";
-const LOG_INSERT_EXTRA_ROWS = 1000;
-const TIME_TITLE = "Aikaleima";
-const TYPE_TITLE = "Taso";
-const MESSAGE_TITLE = "Viesti";
-const ERROR_LEVEL_TITLE = "Virhe";
-const INFO_LEVEL_TITTLE = "Info";
+TITLE_ROW = 1;
+LOG_SHEET_NAME = "Logi";
+LOG_INSERT_EXTRA_ROWS = 1000;
+TIME_TITLE = "Aikaleima";
+TYPE_TITLE = "Taso";
+MESSAGE_TITLE = "Viesti";
+ERROR_LEVEL_TITLE = "Virhe";
+INFO_LEVEL_TITTLE = "Info";
 
-const SETTINGS_SHEET_NAME = "Asetukset";
-const SETTINGS_TITLE = "Asetus:";
-const VALUE_PREFIX = "Arvo #";
-const VALUE_POSTFIX = ":";
-const MAX_PARAMETERS = 10;
+SETTINGS_SHEET_NAME = "Asetukset";
+SETTINGS_TITLE = "Asetus:";
+VALUE_PREFIX = "Arvo #";
+VALUE_POSTFIX = ":";
+MAX_PARAMETERS = 10;
