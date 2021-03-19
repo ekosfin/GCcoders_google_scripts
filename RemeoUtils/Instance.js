@@ -9,8 +9,11 @@ Instance = class Instance {
       error: (message) => {Log.error(this.sApp, message);}
     }
     this.Cell = {
-      getColumnByTitle: (sheet, title, titleRow) => {return Cell.getColumnByTitle(sheet, title, titleRow);},
       getRowByTitle: (sheet, title, titleColumn) => {return Cell.getRowByTitle(sheet, title, titleColumn);},
+      getRowByTitleInMemory: (table, title, titleRow) => {return Cell.getRowByTitleInMemory(table, title, titleRow);},
+      getColumnByTitle: (sheet, title, titleRow) => {return Cell.getColumnByTitle(sheet, title, titleRow);},
+      getColumnByTitleInMemory: (table, title, titleRow) => {return Cell.getColumnByTitleInMemory(table, title, titleRow);},
+      getFirstEmptyRow: (sheet) => {return Cell.getFirstEmptyRow(sheet);},
       convertColumnIndexToLetter: (column) => {return Cell.convertColumnIndexToLetter(column);}
     }
     this.Settings = {
