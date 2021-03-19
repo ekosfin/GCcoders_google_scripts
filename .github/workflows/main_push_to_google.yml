@@ -31,11 +31,14 @@ jobs:
           node-version: 12
       - name: install clasp
         run: npm install -g @google/clasp
-      - name: toiminnanohjaus push
+      - name: Toiminnanohjaus push
         working-directory: ./Toiminnanohjaus
         run: npm run push-to-app
-      - name: Varastonhallinta push
-        working-directory: ./Varastonhallinta
+      - name: VarastonHallinta push
+        working-directory: ./VarastonHallinta
+        run: npm run push-to-app
+      - name: AjoneuvojenHallinta push
+        working-directory: ./AjoneuvojenHallinta
         run: npm run push-to-app
       - name: SheetManagementUtils push
         working-directory: ./SheetManagementUtils

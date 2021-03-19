@@ -140,7 +140,7 @@ function hideUnusedColumns_(sheet, dateMode, endDate) {
 // Verifies that there is enough space for new dates, generates dates and hide unused space.
 function populateDatesUntil(sheet, dateMode, endDate) {
   initialize();
-  checkAndUpdateSpace(sheet, endDate);
+  checkAndUpdateSpace(sheet, dateMode, endDate);
   generateDates_(sheet, dateMode, endDate);
   hideUnusedColumns_(sheet, dateMode, endDate);
   Utils.Log.info(`Päivitettiin päivä tiedot taulukossa "${sheet.getName()}"`);
