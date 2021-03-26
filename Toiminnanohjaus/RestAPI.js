@@ -117,7 +117,11 @@ function getSchedule_(e) {
         materialName: "",
         data: []
       };
-      let schedule = [];
+      let results = {
+        schedule: [],
+        driverColors: {},
+        destinations: []
+      };
       let cell;
 
       // Get week length
@@ -168,6 +172,7 @@ function getSchedule_(e) {
         }
         cell = cell.offset(0, 1);
       }
+      results["driverColors"] = driverColors;
 
       // Fetch deliveries for each material
       cell = range.getCell(2, 1);
@@ -189,15 +194,29 @@ function getSchedule_(e) {
             cell = cell.offset(0, 1);
           }
 
-          schedule.push({...materialRow});
+          results["schedule"].push({...materialRow});
           materialRow["data"] = [];
           cell = cell.offset(0, -weekLength-1);
         }
         cell = cell.offset(1, 0);
       }
 
+      // Fetch destinations
+      cell = materialRange.getCell(1, 1);
+      while (cell.getValue() != "") {
+        if (cell.getValue() == "Kohteet:") {
+          cell = cell.offset(1, 0);
+          while (cell.getValue() != "") {
+            results["destinations"].push(cell.getValue());
+            cell = cell.offset(1, 0);
+          }
+          break;
+        }
+        cell = cell.offset(0, 1);
+      }
+
       // Return the results
-      let outputJSON = JSON.stringify(schedule);
+      let outputJSON = JSON.stringify(results);
       return outputJSON;
     }
   } 
@@ -211,9 +230,9 @@ function editSchedule_(e) {
   pData = JSON.parse(pData);
 
   if (pData.hasOwnProperty("jwt") ) {
-    let parsedJWT = parseJwt_(pData.jwt, JWT_KEY)
+    let parsedJWT = parseJwt_(pData.jwt, JWT_KEY);
     if (parsedJWT.valid && parsedJWT.data.rights == "edit") {
-      const edits = pData.edits
+      const edits = pData.edits;
       let row;
       let column;
       let data = [];
@@ -286,7 +305,7 @@ function addDelivery_(cell, dayItem, twoWay, dayInfo) {
   }
   
   cell = cell.offset(1, 0);
-  cell.setValue(dayInfo)
+  cell.setValue(dayInfo);
   cell = cell.offset(2, 0);
 
   return cell;
