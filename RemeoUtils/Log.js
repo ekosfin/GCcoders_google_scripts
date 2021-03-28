@@ -38,7 +38,7 @@ Log = class Log {
     }
 
     // Update real sheet
-    this.logSheet.getRange(emptyRow + 1, timeColumn + 1).setValue(new Date()).setNumberFormat("dd.mm.yyyy hh:m");
+    this.logSheet.getRange(emptyRow + 1, timeColumn + 1).setValue(new Date()).setNumberFormat("dd.mm.yyyy hh:mm");
     this.logSheet.getRange(emptyRow + 1, typeColumn + 1).setValue(level);
     this.logSheet.getRange(emptyRow + 1, messageColumn + 1).setValue(message);
 

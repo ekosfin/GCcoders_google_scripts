@@ -101,6 +101,7 @@ function filterOnlyExpiring(vehicles, notificationFinalRemainder) {
 
         // Update last notification send date
         documentProperties.setProperty(vehicle.name + vehicle.number, currentDate.toISOString());
+        Utils.Log.info(`${notification.name} on vanhenemassa ajoneuvossa ${vehicle.number}/${vehicle.registerNumber} ja ilmoitus tulisi lähettää. Ilmoituksen taso on ${lastShouldBeSend ? "kiireinen" : "kiireetön"}`)
       } 
     }
   }
@@ -112,7 +113,7 @@ function sendMessages(expiringVehicles, emailList) {
     // Form message
     const urgencyTitle = expiringVehicle.urgent ? "Tärkeä: " : "";
     const urgencyText = expiringVehicle.urgent ? "kiireellinen" : "hoidettava lähiaikoina";
-    const emailTitle = `${urgencyTitle}${expiringVehicle.expiryName} on vanhetumassa ${expiringVehicle.registerNumber}`;
+    const emailTitle = `${urgencyTitle}${expiringVehicle.expiryName} on vanhetumassa ${expiringVehicle.number}/${expiringVehicle.registerNumber}`;
     const emailMessage = `Ajoneuvo kaipaa lähiaikoina huoltotoimenpiteitä. Alla ajoneuvon tiedot:\n\n` +
                          `Ajoneuvon nimi: ${expiringVehicle.name} \n` +
                          `Ajoneuvon numero: ${expiringVehicle.number} \n` +
