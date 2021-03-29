@@ -2,12 +2,18 @@ import textFinder from "./textFinder";
 import range from "./range";
 
 export default class sheet {
-  constructor(table) {
+  constructor(table, name) {
     this.table = table;
+    this.name = name;
+    this.activeRange;
   }
 
   createTextFinder(target) {
     return new textFinder(this, target);
+  }
+
+  getName() {
+    return this.name;
   }
 
   // getRange using A1 notation
@@ -53,6 +59,18 @@ export default class sheet {
     // Dummy implementation
   }
 
+  showColumns(columnStart, columnEnd) {
+    // Dummy implementation
+  }
+
+  hideColumns(columnStart, columnEnd) {
+    // Dummy implementation
+  }
+
+  getActiveRange() {
+    return this.activeRange;
+  }
+
   insertRowsAfter(row, amount) {
     // Generate new rows
     const newRows = []
@@ -70,6 +88,21 @@ export default class sheet {
     updatedCells.concat(afterRows);
     this.table = updatedCells;
     // this.updatePositions();
+  }
+
+  insertColumnsAfter(column, amount) {
+    // Add new columns to correct place
+    const newTable = [];
+    for (let rowIndex = 0; rowIndex < this.table.length; rowIndex++) {
+      const beforeColumns = this.table[rowIndex].splice(0, column);
+      const afterColumns = this.table[rowIndex].splice(column, 0);
+      const newColumns = new Array(amount);
+      const updatedCells = beforeColumns.concat(newColumns);
+      updatedCells.concat(afterColumns);
+      newTable.push(updatedCells);
+    }
+
+    this.table = newTable;
   }
 
   /* Helper functions for fake implementation */

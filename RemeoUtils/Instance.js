@@ -19,7 +19,7 @@ Instance = class Instance {
     this.Settings = {
       getByKey: (settingKey) => {return Settings.getByKey(this.sApp, settingKey);},
       getCellByKey: (settingKey) => {return Settings.getCellByKey(this.sApp, settingKey);},
-      getDateByKey: (settingKey) => {return Settings.getDateByKey(this.sApp, settingKey) ;}
+      getDateByKey: (settingKey) => {return Settings.getDateByKey(this.sApp, settingKey);}
     }
   }
   setSApp(sApp) {
