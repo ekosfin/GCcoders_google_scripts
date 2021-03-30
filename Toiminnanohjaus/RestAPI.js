@@ -1,11 +1,11 @@
 /************************************************** */
 // CONSTANTS
 /************************************************** */
-SS_ID = "REPLACE_SS_ID";
 SCHEDULE_SHEET_NAME = "Nykyinen viikko";
 MATERIAL_SHEET_NAME = "Kuljettajat & kohteet";
 
-const ss = SpreadsheetApp.openById(SS_ID);
+// The script needs to be deployed in the sheet's context
+const ss = SpreadsheetApp.getActive();
 const Utils = new RemeoUtils.Instance();
 Utils.setSApp(ss);
 WATCH_PW = Utils.Settings.getByKey("Katseluoikeudet")[1];
@@ -24,8 +24,8 @@ const range = sheet.getDataRange();
 const materialRange = materialSheet.getDataRange();
 
 
-// Logger for REST API
-Logger = BetterLog.useSpreadsheet(SS_ID); 
+// TODO: replace logger
+//Logger = BetterLog.useSpreadsheet(SS_ID); 
 
 
 // Nothing to see here
@@ -39,7 +39,7 @@ function doPost(e) {
   let response;
   const params = e.parameters;
 
-  Logger.log(JSON.stringify(e));
+  //Logger.log(JSON.stringify(e));
   
   if (params.hasOwnProperty("route") && params.route == "login") {
     outputJSON = loginUser_(e);
@@ -76,7 +76,7 @@ function loginUser_(e) {
     });
     outputJSON = { JWT: accessToken, message: "Success!" };
     outputJSON = JSON.stringify(outputJSON);
-    Logger.log("Log in path was used with edit rights.");
+    //Logger.log("Log in path was used with edit rights.");
 
   // If user wants read only rights
   } else if (data.hasOwnProperty("watch") && data.watch == WATCH_PW) {
@@ -89,11 +89,11 @@ function loginUser_(e) {
     });
     outputJSON = { JWT: accessToken, message: "Success!" };
     outputJSON = JSON.stringify(outputJSON);
-    Logger.log("Log in path was used with watch rights.");
+    //Logger.log("Log in path was used with watch rights.");
 
   // If no match
   } else {
-    Logger.log("Log in path was used. Credentials did not match.");
+    //Logger.log("Log in path was used. Credentials did not match.");
     outputJSON = { JWT: null, message: "Failure!" };
     outputJSON = JSON.stringify(outputJSON);
   }
@@ -107,7 +107,7 @@ function getSchedule_(e) {
 
   if (pData.hasOwnProperty("jwt") ) {
     let parsedJWT = parseJwt_(pData.jwt, JWT_KEY);
-    if (parsedJWT.valid && parsedJWT.data.rights == ("watch" || "edit")) {
+    if (parsedJWT.valid && (parsedJWT.data.rights == "watch" || parsedJWT.data.rights == "edit")) {
       
       let weekLength = 0;
       let materials = [];
@@ -117,9 +117,13 @@ function getSchedule_(e) {
         materialName: "",
         data: []
       };
+      let driverItem = {
+        driver: "",
+        color: ""
+      };
       let results = {
         schedule: [],
-        driverColors: {},
+        drivers: [],
         destinations: []
       };
       let cell;
@@ -159,20 +163,22 @@ function getSchedule_(e) {
         cell = cell.offset(0, 1);
       }
 
-      // Assign colors based on driver types
+      // Get drivers and assign colors for them based on driver types
       cell = materialRange.getCell(1, 1);
       while (cell.getValue() != "") {
         if (cell.getValue() == "Kuljettajat:") {
           cell = cell.offset(1, 0);
           while (cell.getValue() != "") {
             driverColors[cell.getValue()] = colorSettings[cell.offset(0, 1).getValue()];
+            driverItem["driver"] = cell.getValue();
+            driverItem["color"] = colorSettings[cell.offset(0, 1).getValue()];
+            results["drivers"].push({...driverItem});
             cell = cell.offset(1, 0);
           }
           break;
         }
         cell = cell.offset(0, 1);
       }
-      results["driverColors"] = driverColors;
 
       // Fetch deliveries for each material
       cell = range.getCell(2, 1);
@@ -221,8 +227,8 @@ function getSchedule_(e) {
     }
   } 
 
-  Logger.log("Error in using watch route.");
-  return "Error: Something went wrong while trying to get the schedule. Please try again.";
+  //Logger.log("Error in using watch route.");
+  return false;
 }
 
 function editSchedule_(e) {
@@ -260,8 +266,8 @@ function editSchedule_(e) {
     }
   }
 
-  Logger.log("Error in using edit route.");
-  return "Error: Something went wrong while trying to edit the schedule. Please try again.";
+  //Logger.log("Error in using edit route.");
+  return false;
 }
 
 function getColumnByWeekday_(day) {
