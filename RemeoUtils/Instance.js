@@ -4,9 +4,13 @@
 Instance = class Instance {
   constructor() {
     this.sApp = SpreadsheetApp.getActiveSpreadsheet();
+    this.currentInstance = this;
+    this.LogInstance = new Log();
+    this.LogInstance.setSheetName(LOG_SHEET_NAME);
+    // this.logSheetName = LOG_SHEET_NAME;
     this.Log = {
-      info: (message) => {Log.info(this.sApp, message);},
-      error: (message) => {Log.error(this.sApp, message);}
+      info: (message) => {this.LogInstance.log(this.sApp, INFO_LEVEL_TITTLE, message);},
+      error: (message) => {this.LogInstance.log(this.sApp, ERROR_LEVEL_TITLE, message);}
     }
     this.Cell = {
       getRowByTitle: (sheet, title, titleColumn) => {return Cell.getRowByTitle(sheet, title, titleColumn);},
@@ -24,5 +28,15 @@ Instance = class Instance {
   }
   setSApp(sApp) {
     this.sApp = sApp
+  }
+  setLogSheetName(sheetName) {
+    this.LogInstance.setSheetName(sheetName);
+  }
+
+  static getInstance() {
+    if (!this.currentInstance) {
+      this.currentInstance = new Instance();
+    }
+    return this.currentInstance;
   }
 }

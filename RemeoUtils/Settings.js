@@ -10,13 +10,13 @@ Settings = class Settings {
     const settingKeyColumn = Cell.getColumnByTitleInMemory(this.tableCache, SETTINGS_TITLE, TITLE_ROW - 1);
     if (settingKeyColumn == undefined) {
       const message = `Asetusavainten saraketta ei pystytty löytämään. Oletettiin, että asetus sarake löytyy otsikolla: "${SETTINGS_TITLE} riviltä ${TITLE_ROW}`;
-      Log.error(sApp, message);
+      Instance.getInstance().Log.error(sApp, message);
       throw message
     };
     const settingKeyRow = Cell.getRowByTitleInMemory(this.tableCache, settingKey, settingKeyColumn);
     if (settingKeyRow == undefined) {
       const message = `Asetusta ei löytynyt, asetuksen oletettiin löytyvän avaimella: "${settingKey}"`;
-      Log.error(sApp, message);
+      Instance.getInstance().Log.error(sApp, message);
       throw message
     };
 
@@ -45,7 +45,7 @@ Settings = class Settings {
     if (values[0] == "" || values[1] == "" || !values[0].match(/\w+/) || !values[1].toString().match(/[0-9]+/)) {
       const message = `Asetuksen: "${settingKey}" tietoja ei voitu muuttaa soluksi. ` + 
       `Onhan ensimmäinen parametri asetettu solun kirjaimeksi ja toinen numeroksi?`;
-      Log.error(sApp, message);
+      Instance.getInstance().Log.error(sApp, message);
       throw message;
     }
 

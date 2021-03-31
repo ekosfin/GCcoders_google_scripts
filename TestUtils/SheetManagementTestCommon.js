@@ -43,8 +43,8 @@ export default class TestCommon {
     initialize();
 
     // Reset log caches
-    Log.logSheet = undefined;
-    Log.tableCache = undefined;
+    Utils.LogInstance.logSheet = undefined;
+    Utils.LogInstance.tableCache = undefined;
 
     return [sApp, mSheet];
   }

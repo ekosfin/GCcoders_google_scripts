@@ -3,7 +3,9 @@ import sheet from "../__mocks__/sheet";
 import spreadsheetApp from "../__mocks__/spreadsheetApp";
 
 beforeAll(() => {
+  GlobalUtils.maskGoogleServices();
   GlobalUtils.importFile("./RemeoUtils/Constants.js");
+  GlobalUtils.importFile("./RemeoUtils/Instance.js");
   GlobalUtils.importFile("./RemeoUtils/Log.js");
   GlobalUtils.importFile("./RemeoUtils/Cell.js");
   GlobalUtils.importFile("./RemeoUtils/Settings.js");
@@ -29,7 +31,7 @@ describe("Setting utils tests", () => {
 
     const logSheet = new sheet(logTable);
     sApp.addSheet(LOG_SHEET_NAME, logSheet);
-    Log.checkCache(sApp, 0);
+    Instance.getInstance().LogInstance.checkCache(sApp, 0);
     return [sApp, mSheet];
   }
 

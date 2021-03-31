@@ -11,14 +11,22 @@ const testTable = [
 ];
 
 beforeAll(() => {
+  GlobalUtils.maskGoogleServices();
   GlobalUtils.importFile("./RemeoUtils/Constants.js");
   GlobalUtils.importFile("./RemeoUtils/Log.js");
   GlobalUtils.importFile("./RemeoUtils/Cell.js");
+  GlobalUtils.importFile("./RemeoUtils/Instance.js");
 });
 
+let logInstance;
+beforeEach(() => {
+  logInstance = new Log();
+  logInstance.setSheetName(LOG_SHEET_NAME);
+})
+
 afterEach(() => {
-  Log.logSheet = undefined;
-  Log.tableCache = undefined;
+  logInstance.logSheet = undefined;
+  logInstance.tableCache = undefined;
 });
 
 describe("Log utils tests", () => {
@@ -26,7 +34,7 @@ describe("Log utils tests", () => {
     const sApp = new spreadsheetApp();
     const mSheet = new sheet(testTable);
     sApp.addSheet(LOG_SHEET_NAME, mSheet);
-    Log.checkCache(sApp, 0);
+    logInstance.checkCache(sApp, 0);
     return [sApp, mSheet];
   }
   describe("Test checkCache", () => {
@@ -39,26 +47,26 @@ describe("Log utils tests", () => {
 
     test("Test checkCache initial caching", () => {
       // Cache should be empty before first call
-      expect(Log.logSheet).toBe(undefined);
-      expect(Log.tableCache).toBe(undefined);
-      Log.checkCache(sApp, 0);
+      expect(logInstance.logSheet).toBe(undefined);
+      expect(logInstance.tableCache).toBe(undefined);
+      logInstance.checkCache(sApp, 0);
 
       // After first call cache should be populated
-      expect(Log.logSheet).toBe(mSheet);
-      expect(Log.tableCache).not.toBe(undefined);
+      expect(logInstance.logSheet).toBe(mSheet);
+      expect(logInstance.tableCache).not.toBe(undefined);
     });
 
     test("Test checkCache forced refresh", () => {
-      Log.checkCache(sApp, 0);
+      logInstance.checkCache(sApp, 0);
 
       // Modify table
-      Log.logSheet.insertRowsAfter(4, 2);
+      logInstance.logSheet.insertRowsAfter(4, 2);
 
-      expect(Log.tableCache).toHaveLength(4);
+      expect(logInstance.tableCache).toHaveLength(4);
 
       // Force update cache
-      Log.checkCache(sApp, 6);
-      expect(Log.tableCache).toHaveLength(6);
+      logInstance.checkCache(sApp, 6);
+      expect(logInstance.tableCache).toHaveLength(6);
     });
   });
 
@@ -73,8 +81,8 @@ describe("Log utils tests", () => {
       ];
       let sApp, mSheet;
       [sApp, mSheet] = prepareTest(testTable);
-      Log.checkCache(sApp, 0);
-      expect(Log.getFirstEmptyRowInMemory(sApp)).toBe(3);
+      logInstance.checkCache(sApp, 0);
+      expect(logInstance.getFirstEmptyRowInMemory(sApp)).toBe(3);
     });
 
     test("Test getFirstEmptyRowInMemory with empty table", () => {
@@ -86,7 +94,7 @@ describe("Log utils tests", () => {
       ];
       let sApp, mSheet;
       [sApp, mSheet] = prepareTest(testTable);
-      expect(Log.getFirstEmptyRowInMemory(sApp)).toBe(0);
+      expect(logInstance.getFirstEmptyRowInMemory(sApp)).toBe(0);
     });
 
     test("Test getFirstEmptyRowInMemory with full table", () => {
@@ -98,7 +106,7 @@ describe("Log utils tests", () => {
       ];
       let sApp, mSheet;
       [sApp, mSheet] = prepareTest(testTable);
-      expect(Log.getFirstEmptyRowInMemory(sApp)).toBe(4);
+      expect(logInstance.getFirstEmptyRowInMemory(sApp)).toBe(4);
     });
   });
 
@@ -113,9 +121,9 @@ describe("Log utils tests", () => {
       expect(mSheet.table[row][1]).toBe(level);
       expect(mSheet.table[row][2]).toBe(message);
 
-      expect(Log.tableCache[row][0]).toStrictEqual(date);
-      expect(Log.tableCache[row][1]).toBe(level);
-      expect(Log.tableCache[row][2]).toBe(message);
+      expect(logInstance.tableCache[row][0]).toStrictEqual(date);
+      expect(logInstance.tableCache[row][1]).toBe(level);
+      expect(logInstance.tableCache[row][2]).toBe(message);
     }
 
     beforeAll(() => {
@@ -136,7 +144,7 @@ describe("Log utils tests", () => {
       ];
       let sApp, mSheet;
       [sApp, mSheet] = prepareTest(testTable);
-      Log.log(sApp, level, message);
+      logInstance.log(sApp, level, message);
       checkLogRow(2, mSheet);
     });
 
@@ -155,7 +163,7 @@ describe("Log utils tests", () => {
       let sApp, mSheet;
       [sApp, mSheet] = prepareTest(testTable);
       expect(() => {
-        Log.log(sApp, level, message);
+        logInstance.log(sApp, level, message);
       }).toThrow("Jotakin otsikoista:");
     });
 
@@ -168,9 +176,42 @@ describe("Log utils tests", () => {
       ];
       let sApp, mSheet;
       [sApp, mSheet] = prepareTest(testTable);
-      Log.log(sApp, level, message);
+      logInstance.log(sApp, level, message);
       checkLogRow(4, mSheet);
       expect(mSheet.table.length).toBe(4 + LOG_INSERT_EXTRA_ROWS);
+    });
+
+    test("Test logging to multiple tables", () => {
+      const testTableNormal = [
+        [TIME_TITLE, TYPE_TITLE, MESSAGE_TITLE, ""],
+        ["09.03.2021 18:50", "Info", "Test log", ""],
+        ["09.03.2021 18:51", "Info", "Test log", ""],
+        ["", "", "", ""],
+      ];
+      const testTableExtra = [
+        [TIME_TITLE, TYPE_TITLE, MESSAGE_TITLE, ""],
+        ["09.03.2021 18:50", "Info", "Test log", ""],
+        ["09.03.2021 18:51", "Info", "Test log", ""],
+        ["", "", "", ""],
+      ];
+      const sApp = new spreadsheetApp();
+      const mSheetNormal = new sheet(testTableNormal);
+      const mSheetExtra = new sheet(testTableExtra);
+      sApp.addSheet(LOG_SHEET_NAME, mSheetNormal);
+      sApp.addSheet("Extra", mSheetExtra);
+
+      const instanceNormal = new Instance();
+      instanceNormal.sApp = sApp;
+      const instanceExtra = new Instance();
+      instanceExtra.sApp = sApp;
+      instanceExtra.setLogSheetName("Extra");
+
+      instanceNormal.Log.info("Normal message");
+      instanceExtra.Log.info("Extra message");
+      expect(mSheetNormal.table[3][1]).toBe("Info");
+      expect(mSheetNormal.table[3][2]).toBe("Normal message");
+      expect(mSheetExtra.table[3][1]).toBe("Info");
+      expect(mSheetExtra.table[3][2]).toBe("Extra message");
     });
   });
 });
