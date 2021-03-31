@@ -1,6 +1,6 @@
-const sApp = SpreadsheetApp.getActiveSpreadsheet();
-const documentProperties = PropertiesService.getDocumentProperties();
-const Utils = new RemeoUtils.Instance();
+sApp = SpreadsheetApp.getActiveSpreadsheet();
+documentProperties = PropertiesService.getDocumentProperties();
+Utils = new RemeoUtils.Instance();
 
 /* These values are used for updating different sheets date axes.
    Sheet names can be changed, but order should not be changed!
