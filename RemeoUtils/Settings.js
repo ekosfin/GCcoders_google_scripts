@@ -1,6 +1,9 @@
 Settings = class Settings {
+  constructor(instance) {
+    this.instance = instance;
+  }
   // Retrieve a setting by key
-  static getByKey(sApp, settingKey) {
+  getByKey(sApp, settingKey) {
     // Create new cache, if cache is undefined
     if (!this.tableCache) {
       const settingsSheet = sApp.getSheetByName(SETTINGS_SHEET_NAME);
@@ -10,13 +13,13 @@ Settings = class Settings {
     const settingKeyColumn = Cell.getColumnByTitleInMemory(this.tableCache, SETTINGS_TITLE, TITLE_ROW - 1);
     if (settingKeyColumn == undefined) {
       const message = `Asetusavainten saraketta ei pystytty löytämään. Oletettiin, että asetus sarake löytyy otsikolla: "${SETTINGS_TITLE} riviltä ${TITLE_ROW}`;
-      Instance.getInstance().Log.error(sApp, message);
+      this.instance.Log.error(sApp, message);
       throw message
     };
     const settingKeyRow = Cell.getRowByTitleInMemory(this.tableCache, settingKey, settingKeyColumn);
     if (settingKeyRow == undefined) {
       const message = `Asetusta ei löytynyt, asetuksen oletettiin löytyvän avaimella: "${settingKey}"`;
-      Instance.getInstance().Log.error(sApp, message);
+      this.instance.Log.error(sApp, message);
       throw message
     };
 
@@ -38,14 +41,14 @@ Settings = class Settings {
   }
 
   // Retrieve setting by key and pack it into cell object
-  static getCellByKey(sApp, settingKey) {
-    const values = Settings.getByKey(sApp, settingKey);
+  getCellByKey(sApp, settingKey) {
+    const values = this.getByKey(sApp, settingKey);
 
     // Check that first parameter contains only letters and second only numbers
     if (values[0] == "" || values[1] == "" || !values[0].match(/\w+/) || !values[1].toString().match(/[0-9]+/)) {
       const message = `Asetuksen: "${settingKey}" tietoja ei voitu muuttaa soluksi. ` + 
       `Onhan ensimmäinen parametri asetettu solun kirjaimeksi ja toinen numeroksi?`;
-      Instance.getInstance().Log.error(sApp, message);
+      this.instance.Log.error(sApp, message);
       throw message;
     }
 
@@ -62,7 +65,7 @@ Settings = class Settings {
     return cell;
   }
 
-  static getDateByKey(sApp, settingKey) {
-    return Settings.getByKey(sApp, settingKey)[0];
+  getDateByKey(sApp, settingKey) {
+    return this.getByKey(sApp, settingKey)[0];
   }
 }

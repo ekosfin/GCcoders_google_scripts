@@ -15,6 +15,7 @@ beforeAll(() => {
   GlobalUtils.importFile("./RemeoUtils/Constants.js");
   GlobalUtils.importFile("./RemeoUtils/Log.js");
   GlobalUtils.importFile("./RemeoUtils/Cell.js");
+  GlobalUtils.importFile("./RemeoUtils/Settings.js");
   GlobalUtils.importFile("./RemeoUtils/Instance.js");
 });
 
