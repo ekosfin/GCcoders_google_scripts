@@ -1,4 +1,8 @@
 export default class spreadsheetApp {
+  static AutoFillSeries = {
+    DEFAULT_SERIES: "DEFAULT_SERIES"
+  }
+
   static instance = new spreadsheetApp();
 
   constructor() {
@@ -18,6 +22,7 @@ export default class spreadsheetApp {
   /********************************************/
   addSheet(name, sheet) {
     this.sheets[name] = sheet;
+    sheet.name = name;
     return this;
   }
 

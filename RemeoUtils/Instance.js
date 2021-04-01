@@ -4,9 +4,13 @@
 Instance = class Instance {
   constructor() {
     this.sApp = SpreadsheetApp.getActiveSpreadsheet();
+    this.LogInstance = new Log();
+    this.LogInstance.setSheetName(LOG_SHEET_NAME);
+    this.SettingsInstance = new Settings(this);
+    // this.logSheetName = LOG_SHEET_NAME;
     this.Log = {
-      info: (message) => {Log.info(this.sApp, message);},
-      error: (message) => {Log.error(this.sApp, message);}
+      info: (message) => {this.LogInstance.log(this.sApp, INFO_LEVEL_TITTLE, message);},
+      error: (message) => {this.LogInstance.log(this.sApp, ERROR_LEVEL_TITLE, message);}
     }
     this.Cell = {
       getRowByTitle: (sheet, title, titleColumn) => {return Cell.getRowByTitle(sheet, title, titleColumn);},
@@ -17,12 +21,15 @@ Instance = class Instance {
       convertColumnIndexToLetter: (column) => {return Cell.convertColumnIndexToLetter(column);}
     }
     this.Settings = {
-      getByKey: (settingKey) => {return Settings.getByKey(this.sApp, settingKey);},
-      getCellByKey: (settingKey) => {return Settings.getCellByKey(this.sApp, settingKey);},
-      getDateByKey: (settingKey) => {return Settings.getDateByKey(this.sApp, settingKey) ;}
+      getByKey: (settingKey) => {return this.SettingsInstance.getByKey(this.sApp, settingKey);},
+      getCellByKey: (settingKey) => {return this.SettingsInstance.getCellByKey(this.sApp, settingKey);},
+      getDateByKey: (settingKey) => {return this.SettingsInstance.getDateByKey(this.sApp, settingKey);}
     }
   }
   setSApp(sApp) {
     this.sApp = sApp
+  }
+  setLogSheetName(sheetName) {
+    this.LogInstance.setSheetName(sheetName);
   }
 }

@@ -4,38 +4,25 @@
 /*******************************************************************************************/
 // c
 
-/**
- * Returns the week number for this date.  dowOffset is the day of week the week
- * "starts" on for your locale - it can be from 0 to 6. If dowOffset is 1 (Monday),
- * the week returned is the ISO 8601 week number.
- * @param int dowOffset
- * @return int
- */
+// https://github.com/commenthol/weeknumber/blob/master/src/index.js
 Date.prototype.getWeek = function() {
-  /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.epoch-calendar.com */
+  const MINUTE = 60000
+  const WEEK = 604800000 // = 7 * 24 * 60 * 60 * 1000 = 7 days in ms
+  const tzDiff = (first, second) => (first.getTimezoneOffset() - second.getTimezoneOffset()) * MINUTE
 
-	const newYear = new Date(this.getFullYear(),0,1);
-	let day = newYear.getDay() - 1; //the day of week the year begins on
-	day = (day >= 0 ? day : day + 7);
-	const daynum = Math.floor((this.getTime() - newYear.getTime() - 
-	(this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-	let weeknum;
-	//if the year starts before the middle of a week
-	if(day < 4) {
-		weeknum = Math.floor((daynum+day-1)/7) + 1;
-		if(weeknum > 52) {
-			nYear = new Date(this.getFullYear() + 1,0,1);
-			nday = nYear.getDay() - 1;
-			nday = nday >= 0 ? nday : nday + 7;
-			/*if the next year starts before the middle of
- 			  the week, it is week #1 of that year*/
-			weeknum = nday < 4 ? 1 : 53;
-		}
-	}
-	else {
-		weeknum = Math.floor((daynum+day-1)/7);
-	}
-	return weeknum;
+  // day 0 is monday
+  const day = (this.getDay() + 6) % 7
+  // get thursday of present week
+  const thursday = new Date(this);
+  thursday.setDate(this.getDate() - day + 3)
+  // set 1st january first
+  const firstThursday = new Date(thursday.getFullYear(), 0, 1)
+  // if Jan 1st is not a thursday...
+  if (firstThursday.getDay() !== 4) {
+    firstThursday.setMonth(0, 1 + (11 /* 4 + 7 */ - firstThursday.getDay()) % 7)
+  }
+  const weekNumber = 1 + Math.floor((thursday - firstThursday + tzDiff(firstThursday, thursday)) / WEEK)
+  return weekNumber
 };
 
 // Return date of next monday, unless current date is monday

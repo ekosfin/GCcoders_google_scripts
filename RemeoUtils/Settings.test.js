@@ -3,7 +3,9 @@ import sheet from "../__mocks__/sheet";
 import spreadsheetApp from "../__mocks__/spreadsheetApp";
 
 beforeAll(() => {
+  GlobalUtils.maskGoogleServices();
   GlobalUtils.importFile("./RemeoUtils/Constants.js");
+  GlobalUtils.importFile("./RemeoUtils/Instance.js");
   GlobalUtils.importFile("./RemeoUtils/Log.js");
   GlobalUtils.importFile("./RemeoUtils/Cell.js");
   GlobalUtils.importFile("./RemeoUtils/Settings.js");
@@ -16,6 +18,8 @@ afterEach(() => {
 });
 
 describe("Setting utils tests", () => {
+  let sApp, mSheet, instance;
+
   function prepareTest(testTable) {
     const logTable = [
       [TIME_TITLE, TYPE_TITLE, MESSAGE_TITLE],
@@ -23,17 +27,16 @@ describe("Setting utils tests", () => {
       ["", "", ""],
       ["", "", ""],
     ];
-    const sApp = new spreadsheetApp();
-    const mSheet = new sheet(testTable);
+    sApp = new spreadsheetApp();
+    mSheet = new sheet(testTable);
     sApp.addSheet(SETTINGS_SHEET_NAME, mSheet);
 
     const logSheet = new sheet(logTable);
     sApp.addSheet(LOG_SHEET_NAME, logSheet);
-    Log.checkCache(sApp, 0);
-    return [sApp, mSheet];
+    instance = new Instance();
+    instance.sApp = sApp;
+    instance.LogInstance.checkCache(sApp, 0);
   }
-
-  let sApp, mSheet;
 
   describe("Test getByKey", () => {
     test("Test getByKey with one value", () => {
@@ -43,8 +46,8 @@ describe("Setting utils tests", () => {
         ["", "", "", ""],
         ["", "", "", ""],
       ];
-      [sApp, mSheet] = prepareTest(testTable);
-      const resultArray = Settings.getByKey(sApp, "Test setting key");
+      prepareTest(testTable);
+      const resultArray = instance.Settings.getByKey("Test setting key");
       expect(resultArray.length).toBe(MAX_PARAMETERS);
       expect(resultArray[0]).toBe("Test123");
     });
@@ -56,8 +59,8 @@ describe("Setting utils tests", () => {
         ["", "", "", ""],
         ["", "", "", ""],
       ];
-      [sApp, mSheet] = prepareTest(testTable);
-      const resultArray = Settings.getByKey(sApp, "Test setting key");
+      prepareTest(testTable);
+      const resultArray = instance.Settings.getByKey("Test setting key");
       expect(resultArray[0]).toBe("Test3");
       expect(resultArray[1]).toBe("Test2");
       expect(resultArray[2]).toBe("Test1");
@@ -70,8 +73,8 @@ describe("Setting utils tests", () => {
         ["", "", "", ""],
         ["", "", "", ""],
       ];
-      [sApp, mSheet] = prepareTest(testTable);
-      const resultArray = Settings.getByKey(sApp, "Test setting key");
+      prepareTest(testTable);
+      const resultArray = instance.Settings.getByKey("Test setting key");
       expect(resultArray[0]).toBe("Test1");
       expect(resultArray[1]).toBe("Test2");
       expect(resultArray[2]).toBe("Test3");
@@ -84,9 +87,9 @@ describe("Setting utils tests", () => {
         ["", "", "", ""],
         ["", "", "", ""],
       ];
-      [sApp, mSheet] = prepareTest(testTable);
+      prepareTest(testTable);
       expect(() => {
-        Settings.getByKey(sApp, "Test setting key");
+        instance.Settings.getByKey("Test setting key");
       }).toThrow("Asetusavainten saraketta ei pystytty löytämään.");
     });
 
@@ -97,9 +100,9 @@ describe("Setting utils tests", () => {
         ["", "", "", ""],
         ["", "", "", ""],
       ];
-      [sApp, mSheet] = prepareTest(testTable);
+      prepareTest(testTable);
       expect(() => {
-        Settings.getByKey(sApp, "Test setting key");
+        instance.Settings.getByKey("Test setting key");
       }).toThrow("Asetusta ei löytynyt");
     });
 
@@ -111,8 +114,8 @@ describe("Setting utils tests", () => {
           ["", "", "", ""],
           ["", "", "", ""],
         ];
-        [sApp, mSheet] = prepareTest(testTable);
-        const foundCell = Settings.getCellByKey(sApp, "Test setting key");
+        prepareTest(testTable);
+        const foundCell = instance.Settings.getCellByKey("Test setting key");
         expect(foundCell.row).toBe(4);
         expect(foundCell.column).toBe(3);
         expect(foundCell.columnLetter).toBe("C");
@@ -126,8 +129,8 @@ describe("Setting utils tests", () => {
           ["", "", "", ""],
           ["", "", "", ""],
         ];
-        [sApp, mSheet] = prepareTest(testTable);
-        expect(() => {Settings.getCellByKey(sApp, "Test setting key")}).toThrow("Asetuksen:");
+        prepareTest(testTable);
+        expect(() => {instance.Settings.getCellByKey("Test setting key")}).toThrow("Asetuksen:");
       });
 
       test("Test getCellByKey with empty data", () => {
@@ -137,8 +140,8 @@ describe("Setting utils tests", () => {
           ["", "", "", ""],
           ["", "", "", ""],
         ];
-        [sApp, mSheet] = prepareTest(testTable);
-        expect(() => {Settings.getCellByKey(sApp, "Test setting key")}).toThrow("Asetuksen:");
+        prepareTest(testTable);
+        expect(() => {instance.Settings.getCellByKey("Test setting key")}).toThrow("Asetuksen:");
       });
     });
   });

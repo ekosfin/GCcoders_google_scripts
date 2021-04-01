@@ -51,7 +51,19 @@ export default class range {
     return this;
   }
 
-  shiftColumnGroupDepth() {
+  activate() {
+    this.sheet.activeRange = this;
+  }
+
+  shiftColumnGroupDepth(amount) {
+    // Dummy implementation
+  }
+
+  setBackground(color) {
+    // Dummy implementation
+  }
+
+  autoFill(autoFillRange, autoFillType) {
     // Dummy implementation
   }
 

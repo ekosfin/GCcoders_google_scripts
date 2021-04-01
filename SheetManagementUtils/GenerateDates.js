@@ -118,13 +118,14 @@ function expandPreviousHiding_(sheet, columnsRequired) {
   let previousHiding = parseInt(documentProperties.getProperty(LAST_HIDE_PREFIX + sheet.getName()));
   if (previousHiding && columnsRequired < sheet.getMaxColumns()) {
     // If nothing new will be shown
-    if (columnsRequired - previousHiding) {
+    if (columnsRequired - previousHiding <= 0) {
       return;
     }
     sheet.showColumns(previousHiding, columnsRequired);
   } else {
     sheet.showColumns(1, sheet.getMaxColumns());
   }
+  documentProperties.setProperty(LAST_HIDE_PREFIX + sheet.getName(), columnsRequired + 1);
 }
 
 // Hide cells that are not needed yet. Extra cells are generated uppfront,
@@ -132,7 +133,6 @@ function expandPreviousHiding_(sheet, columnsRequired) {
 function hideUnusedColumns_(sheet, dateMode, endDate) {
   const columnsRequired = getColumnAmountByEndDate(dateMode, endDate) + START_DATE_CELL_SETTING.column;
   expandPreviousHiding_(sheet, columnsRequired);
-  documentProperties.setProperty(LAST_HIDE_PREFIX + sheet.getName(), columnsRequired + 1);
   sheet.hideColumns(columnsRequired + 1, sheet.getMaxColumns() - columnsRequired);
   Utils.Log.info(`Piilotettiin sarakkeet ${columnsRequired + 1}, ${sheet.getMaxColumns()} taulukosta: "${sheet.getName()}" onnistuneesti.`);
 }
