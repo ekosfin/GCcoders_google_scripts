@@ -3,11 +3,13 @@
 /************************************************** */
 SCHEDULE_SHEET_NAME = "Nykyinen viikko";
 MATERIAL_SHEET_NAME = "Kuljettajat & kohteet";
+LOG_SHEET_NAME = "REST Logi";
 
 // The script needs to be deployed in the sheet's context
 const ss = SpreadsheetApp.getActive();
 const Utils = new RemeoUtils.Instance();
 Utils.setSApp(ss);
+Utils.setLogSheetName(LOG_SHEET_NAME);
 WATCH_PW = Utils.Settings.getByKey("Katseluoikeudet")[1];
 EDIT_PW = Utils.Settings.getByKey("Muokkausoikeudet")[1];
 
@@ -24,10 +26,6 @@ const range = sheet.getDataRange();
 const materialRange = materialSheet.getDataRange();
 
 
-// TODO: replace logger
-//Logger = BetterLog.useSpreadsheet(SS_ID); 
-
-
 // Nothing to see here
 function doGet(e) {
   return true;
@@ -38,8 +36,6 @@ function doPost(e) {
   let outputJSON;
   let response;
   const params = e.parameters;
-
-  //Logger.log(JSON.stringify(e));
   
   if (params.hasOwnProperty("route") && params.route == "login") {
     outputJSON = loginUser_(e);
@@ -48,6 +44,11 @@ function doPost(e) {
     );
   } else if (params.hasOwnProperty("route") && params.route == "watch") {
     outputJSON = getSchedule_(e);
+    return ContentService.createTextOutput(outputJSON).setMimeType(
+      ContentService.MimeType.JSON
+    );
+  } else if (params.hasOwnProperty("route") && params.route == "accessRights") {
+    outputJSON = getAccessRights_(e);
     return ContentService.createTextOutput(outputJSON).setMimeType(
       ContentService.MimeType.JSON
     );
@@ -76,7 +77,7 @@ function loginUser_(e) {
     });
     outputJSON = { JWT: accessToken, message: "Success!" };
     outputJSON = JSON.stringify(outputJSON);
-    //Logger.log("Log in path was used with edit rights.");
+    Utils.Log.info(`"Login"-reittiä käytetty "edit"-oikeuksilla`);
 
   // If user wants read only rights
   } else if (data.hasOwnProperty("watch") && data.watch == WATCH_PW) {
@@ -89,11 +90,11 @@ function loginUser_(e) {
     });
     outputJSON = { JWT: accessToken, message: "Success!" };
     outputJSON = JSON.stringify(outputJSON);
-    //Logger.log("Log in path was used with watch rights.");
+    Utils.Log.info(`"Login"-reittiä käytetty "watch"-oikeuksilla`);
 
   // If no match
   } else {
-    //Logger.log("Log in path was used. Credentials did not match.");
+    Utils.Log.error(`"Login"-reitin käyttö epäonnistui. Virheellinen salasana`);
     outputJSON = { JWT: null, message: "Failure!" };
     outputJSON = JSON.stringify(outputJSON);
   }
@@ -105,7 +106,7 @@ function getSchedule_(e) {
   let pData = e.postData.contents;
   pData = JSON.parse(pData);
 
-  if (pData.hasOwnProperty("jwt") ) {
+  if (pData.hasOwnProperty("jwt")) {
     let parsedJWT = parseJwt_(pData.jwt, JWT_KEY);
     if (parsedJWT.valid && (parsedJWT.data.rights == "watch" || parsedJWT.data.rights == "edit")) {
       
@@ -221,13 +222,62 @@ function getSchedule_(e) {
         cell = cell.offset(0, 1);
       }
 
+      Utils.Log.info("Nykyinen viikko haettu onnistuneesti");
+
       // Return the results
       let outputJSON = JSON.stringify(results);
       return outputJSON;
     }
   } 
 
-  //Logger.log("Error in using watch route.");
+  Utils.Log.error(`"Watch"-reitin käyttö epäonnistui`);
+  return false;
+}
+
+function getAccessRights_(e) {
+  let pData = e.postData.contents;
+  pData = JSON.parse(pData);
+
+  if (pData.hasOwnProperty("jwt")) {
+    let parsedJWT = parseJwt_(pData.jwt, JWT_KEY);
+    if (parsedJWT.valid && parsedJWT.data.rights == "edit") {
+      let accessRights = [];
+      let user = {
+        email: "",
+        accessLevel: ""
+      };
+      let settings;
+
+      // Get access rights settings for employees
+      let index = 1;
+      while (true) {
+        try {
+          settings = Utils.Settings.getByKey("Työntekijän " + index + " oikeudet");
+          user["email"] = settings[0];
+          user["accessLevel"] = settings[1];
+          accessRights.push({...user});
+          index++;
+        }
+        catch (e) {
+          break;
+        }
+      }
+
+      // Overwrite unwanted error message
+      const logSheet = ss.getSheetByName(LOG_SHEET_NAME);
+      const logRange = logSheet.getDataRange();
+      const lastRow = logSheet.getLastRow();
+      const cell = logRange.getCell(lastRow, 1);
+      cell.offset(0, 1).setValue("Info");
+      cell.offset(0, 2).setValue("Käyttöoikeudet haettu onnistuneesti");
+
+      // Return the results
+      let outputJSON = JSON.stringify(accessRights);
+      return outputJSON;
+    }
+  }
+
+  Utils.Log.error(`"AccessRights"-reitin käyttö epäonnistui`);
   return false;
 }
 
@@ -235,7 +285,7 @@ function editSchedule_(e) {
   let pData = e.postData.contents;
   pData = JSON.parse(pData);
 
-  if (pData.hasOwnProperty("jwt") ) {
+  if (pData.hasOwnProperty("jwt")) {
     let parsedJWT = parseJwt_(pData.jwt, JWT_KEY);
     if (parsedJWT.valid && parsedJWT.data.rights == "edit") {
       const edits = pData.edits;
@@ -262,11 +312,12 @@ function editSchedule_(e) {
         }
       }
 
+      Utils.Log.info("Taulukkoa muokattu onnistuneesti");
       return "Edit successful";
     }
   }
 
-  //Logger.log("Error in using edit route.");
+  Utils.Log.error(`"Edit"-reitin käyttö epäonnistui`);
   return false;
 }
 
