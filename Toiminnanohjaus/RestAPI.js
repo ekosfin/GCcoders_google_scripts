@@ -49,20 +49,36 @@ function doPost(e) {
     );
   }
 
+  //Check email
+  let permissions = verifyEmail_(UserData);
+  if (permissions === "Not found") {
+    outputJSON = { message: "Email not in system" };
+    outputJSON = JSON.stringify(outputJSON);
+    return ContentService.createTextOutput(outputJSON).setMimeType(
+      ContentService.MimeType.JSON
+    );
+  } else if (permissions === "Error") {
+    outputJSON = { message: "Error in sheets" };
+    outputJSON = JSON.stringify(outputJSON);
+    return ContentService.createTextOutput(outputJSON).setMimeType(
+      ContentService.MimeType.JSON
+    );
+  }
+
   //Route tree
   if (params.route === "data") {
     outputJSON = getSchedule_();
     return ContentService.createTextOutput(outputJSON).setMimeType(
       ContentService.MimeType.JSON
     );
-  } else if (params.route === "edit" && UserData.ACCESS === "edit") {
-    response = editSchedule_(UserData);
-    return ContentService.createTextOutput(response);
   } else if (params.route === "accessRights") {
     outputJSON = getAccessRights_();
     return ContentService.createTextOutput(outputJSON).setMimeType(
       ContentService.MimeType.JSON
     );
+  } else if (params.route === "edit" && permissions === "edit") {
+    response = editSchedule_(UserData);
+    return ContentService.createTextOutput(response);
   } else {
     return ContentService.createTextOutput("400 Bad Request");
   }
@@ -221,9 +237,7 @@ function getAccessRights_() {
   cell.offset(0, 1).setValue("Info");
   cell.offset(0, 2).setValue("Käyttöoikeudet haettu onnistuneesti");
 
-  // Return the results
-  let outputJSON = JSON.stringify(accessRights);
-  return outputJSON;
+  return accessRights;
 }
 
 function editSchedule_(pData) {
@@ -314,4 +328,20 @@ function addDelivery_(cell, dayItem, twoWay, dayInfo) {
   cell = cell.offset(2, 0);
 
   return cell;
+}
+
+function verifyEmail_(pData) {
+  const email = pData.email;
+  const accessRights = getAccessRights_();
+  const found = accessRights.find((element) => element.email == email);
+  if (found === undefined) {
+    return "Not found";
+  }
+  if (found.accessLevel === "edit") {
+    return "edit";
+  } else if (found.accessLevel === "watch") {
+    return "watch";
+  } else {
+    return "Error";
+  }
 }
