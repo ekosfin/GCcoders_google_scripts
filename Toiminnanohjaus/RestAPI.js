@@ -51,13 +51,13 @@ function doPost(e) {
 
   //Check email
   let permissions = verifyEmail_(UserData);
-  if (permissions === "Not found") {
+  if (permissions == "Not found") {
     outputJSON = { message: "Email not in system" };
     outputJSON = JSON.stringify(outputJSON);
     return ContentService.createTextOutput(outputJSON).setMimeType(
       ContentService.MimeType.JSON
     );
-  } else if (permissions === "Error") {
+  } else if (permissions == "Error") {
     outputJSON = { message: "Error in sheets" };
     outputJSON = JSON.stringify(outputJSON);
     return ContentService.createTextOutput(outputJSON).setMimeType(
@@ -66,12 +66,12 @@ function doPost(e) {
   }
 
   //Route tree
-  if (params.route === "data") {
+  if (params.route == "data") {
     outputJSON = getSchedule_(permissions);
     return ContentService.createTextOutput(outputJSON).setMimeType(
       ContentService.MimeType.JSON
     );
-  } else if (params.route === "edit" && permissions === "edit") {
+  } else if (params.route == "edit" && permissions == "edit") {
     response = editSchedule_(UserData);
     return ContentService.createTextOutput(response);
   } else {
