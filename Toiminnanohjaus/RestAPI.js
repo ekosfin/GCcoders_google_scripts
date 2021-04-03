@@ -67,12 +67,7 @@ function doPost(e) {
 
   //Route tree
   if (params.route === "data") {
-    outputJSON = getSchedule_();
-    return ContentService.createTextOutput(outputJSON).setMimeType(
-      ContentService.MimeType.JSON
-    );
-  } else if (params.route === "accessRights") {
-    outputJSON = getAccessRights_();
+    outputJSON = getSchedule_(permissions);
     return ContentService.createTextOutput(outputJSON).setMimeType(
       ContentService.MimeType.JSON
     );
@@ -84,7 +79,7 @@ function doPost(e) {
   }
 }
 
-function getSchedule_() {
+function getSchedule_(permissions) {
   let weekLength = 0;
   let materials = [];
   let colorSettings = {};
@@ -98,6 +93,7 @@ function getSchedule_() {
     color: "",
   };
   let results = {
+    permissions: permissions,
     schedule: [],
     drivers: [],
     destinations: [],
