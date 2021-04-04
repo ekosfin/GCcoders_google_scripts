@@ -3,9 +3,14 @@
 // https://stackoverflow.com/questions/56063156/script-to-convert-xlsx-to-google-sheet-and-move-converted-file
 function convertExcelFilesToSheets_() {
   const folder = DriveApp.getFolderById(PINJA_FOLDER_ID);
-  const files = folder.getFiles();
-  while (files.hasNext()) {
-    const file = files.next();
+  const fileIterator = folder.getFiles();
+
+  const fileHandlers = [];
+  while (fileIterator.hasNext()) {
+    fileHandlers.push(fileIterator.next());
+  }
+
+  for (let file of fileHandlers) {
     const mimeType = file.getMimeType();
 
     // Convert excel files to sheet files
@@ -83,7 +88,7 @@ function mergeMultipleResults_(fileResults) {
       }
     }
   }
-  Utils.Log.info(`Yhsitettiin Pinjan tiedostot onnistuneesti ${fileResults.length} tiedostosta.`);
+  Utils.Log.info(`Yhdistettiin Pinjan tiedostot onnistuneesti ${fileResults.length} tiedostosta.`);
   return merged;
 }
 

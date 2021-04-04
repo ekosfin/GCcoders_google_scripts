@@ -1,7 +1,7 @@
 import sheet from "../__mocks__/sheet";
 import spreadsheetApp from "../__mocks__/spreadsheetApp";
 
-export default class TestCommon {
+export default class SheetManagementTestCommon {
   // Create test environment by generating mocked objects for
   // sheet, log, settings.
   static prepareTest() {

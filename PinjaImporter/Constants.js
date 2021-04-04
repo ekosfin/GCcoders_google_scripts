@@ -1,7 +1,7 @@
 // Function initializes constants that can be downloaded from the settings
 // Constants are lazely donwloaded to speed up start up time, because settings
 // operations are expensive.
-let INITIALIZED = false;
+INITIALIZED = false;
 function initialize() {
   if (INITIALIZED) {
     return

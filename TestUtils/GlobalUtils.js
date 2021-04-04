@@ -2,6 +2,7 @@ import * as fs from "fs";
 import spreadsheetApp from "../__mocks__/spreadsheetApp";
 import propertiesService from "../__mocks__/propertiesService";
 import gmailApp from "../__mocks__/gmailApp";
+import driveApp from "../__mocks__/driveApp";
 
 export default class GlobalUtils {
   static importFile(file, scope) {
@@ -31,6 +32,8 @@ export default class GlobalUtils {
     global.SpreadsheetApp = spreadsheetApp;
     global.PropertiesService = propertiesService;
     global.GmailApp = new gmailApp();
+    global.DriveApp = driveApp;
+    global.Drive = driveApp;
   }
 
   static importRemeoUtils() {
