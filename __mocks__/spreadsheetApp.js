@@ -18,6 +18,16 @@ export default class spreadsheetApp {
     return this.instance;
   }
 
+  static openById(id) {
+    // Mock implementation
+    return this.instance;
+  }
+
+  getSheets() {
+    // Mock implementation
+    return new Array(10);
+  }
+
   /* Helper functions for fake implementation */
   /********************************************/
   addSheet(name, sheet) {

@@ -1,7 +1,7 @@
-const sApp = SpreadsheetApp.getActiveSpreadsheet();
-const Utils = new RemeoUtils.Instance();
+sApp = SpreadsheetApp.getActiveSpreadsheet();
+Utils = new RemeoUtils.Instance();
 
-const END_DATE = new Date();
+END_DATE = new Date();
 // Expand one extra month forward, while updating date information.
 END_DATE.setDate(END_DATE.getDate() + 31);
 

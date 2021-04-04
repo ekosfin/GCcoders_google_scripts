@@ -3,7 +3,7 @@ function getTitleRow_(sheet) {
   const textFinder = sheet.createTextFinder(PINJA_TITLE_ROW_IDENTIFIER);
   const candidates = textFinder.findAll();
   if (candidates.length == 0) {
-    Utils.Log.error(`Otsake rivin sijaintia ei löytynyt avaimella ${TITLE_ROW_IDENTIFIER}`);
+    Utils.Log.error(`Otsake rivin sijaintia ei löytynyt avaimella ${PINJA_TITLE_ROW_IDENTIFIER}`);
     throw ("couldn't find title row with the specified key")
   }
   return candidates[0].getRow();
@@ -112,7 +112,12 @@ function scrapeData_(sheet, titleRow, productList) {
       continue;
     }
 
-    const weight = table[row][weightColumn];
+    const weight = parseFloat(table[row][weightColumn]);
+
+    if (isNaN(weight)) {
+      // Skip if weight is not a number
+      continue;
+    }
     
     const entry = {product: product, type: type, weight: weight};
     // Save under current date as last entry

@@ -3,7 +3,7 @@
 function getProductList() {
   const productStartCell = Utils.Settings.getCellByKey(PRODUCT_LIST_START_CELL_NAME);
   const sheet = sApp.getSheetByName(PRODUCT_SHEET_NAME);
-  const rawProductList = sheet.getRange(`${productStartCell.a1}:${productStartCell.column}${sheet.getMaxRows()}`).getValues();
+  const rawProductList = sheet.getRange(`${productStartCell.a1}:${productStartCell.columnLetter}${sheet.getMaxRows()}`).getValues();
   let productList = [];
   for (const productCandidate of rawProductList) {
     if (productCandidate[0] != "") {
