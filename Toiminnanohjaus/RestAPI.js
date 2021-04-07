@@ -10,8 +10,6 @@ const ss = SpreadsheetApp.getActive();
 const Utils = new RemeoUtils.Instance();
 Utils.setSApp(ss);
 Utils.setLogSheetName(LOG_SHEET_NAME);
-WATCH_PW = Utils.Settings.getByKey("Katseluoikeudet")[1];
-EDIT_PW = Utils.Settings.getByKey("Muokkausoikeudet")[1];
 
 const API_KEY = "REPLACE_API_KEY";
 
