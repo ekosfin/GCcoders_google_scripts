@@ -1,34 +1,14 @@
-/************************************************** */
-// CONSTANTS
-/************************************************** */
-SCHEDULE_SHEET_NAME = "Nykyinen viikko";
-MATERIAL_SHEET_NAME = "Kuljettajat & kohteet";
-LOG_SHEET_NAME = "REST Logi";
-
-// The script needs to be deployed in the sheet's context
-const ss = SpreadsheetApp.getActive();
-const Utils = new RemeoUtils.Instance();
-Utils.setSApp(ss);
-Utils.setLogSheetName(LOG_SHEET_NAME);
-WATCH_PW = Utils.Settings.getByKey("Katseluoikeudet")[1];
-EDIT_PW = Utils.Settings.getByKey("Muokkausoikeudet")[1];
-
-const API_KEY = "REPLACE_API_KEY";
-
-/************************************************** */
-// ACTUAL WEB APP
-/************************************************** */
-const sheet = ss.getSheetByName(SCHEDULE_SHEET_NAME);
-const materialSheet = ss.getSheetByName(MATERIAL_SHEET_NAME);
-const range = sheet.getDataRange();
-const materialRange = materialSheet.getDataRange();
+// const scheduleSheet = sApp.getSheetByName(SCHEDULE_SHEET_NAME);
+// const materialSheet = sApp.getSheetByName(CONFIG_SHEET_NAME);
+const range = scheduleSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
+const materialRange = materialSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
 
 // Nothing to see here
 function doGet(e) {
   return true;
 }
 
-// Routes for login, watch and edit
+// Handle all requests
 function doPost(e) {
   let outputJSON;
   let response;
@@ -226,8 +206,8 @@ function getAccessRights_() {
   }
 
   // Overwrite unwanted error message
-  const logSheet = ss.getSheetByName(LOG_SHEET_NAME);
-  const logRange = logSheet.getDataRange();
+  const logSheet = sApp.getSheetByName(LOG_SHEET_NAME);
+  const logRange = logSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
   const lastRow = logSheet.getLastRow();
   const cell = logRange.getCell(lastRow, 1);
   cell.offset(0, 1).setValue("Info");
@@ -245,7 +225,7 @@ function editSchedule_(pData) {
   let countRemaining;
 
   for (let i = 0; i < edits.length; i++) {
-    row = Utils.Cell.getRowByTitle(sheet, edits[i].materialName, 1);
+    row = Utils.Cell.getRowByTitle(scheduleSheet, edits[i].materialName, 1);
     column = getColumnByWeekday_(edits[i].day);
     countRemaining = 2;
     cell = range.getCell(row + 2, column);
