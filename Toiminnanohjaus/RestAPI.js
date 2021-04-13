@@ -92,7 +92,7 @@ function getSchedule_(permissions) {
   }
 
   // Get materials
-  cell = materialSheet.getRange(1, 1);
+  cell = configSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kuljetettavat:") {
       cell = cell.offset(1, 0);
@@ -106,7 +106,7 @@ function getSchedule_(permissions) {
   }
 
   // Get color settings
-  cell = materialSheet.getRange(1, 1);
+  cell = configSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Värit:") {
       cell = cell.offset(1, 0);
@@ -122,7 +122,7 @@ function getSchedule_(permissions) {
   }
 
   // Get drivers and assign colors for them based on driver types
-  cell = materialSheet.getRange(1, 1);
+  cell = configSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kuljettajat:") {
       cell = cell.offset(1, 0);
@@ -168,7 +168,7 @@ function getSchedule_(permissions) {
   }
 
   // Fetch destinations
-  cell = materialSheet.getRange(1, 1);
+  cell = configSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kohteet:") {
       cell = cell.offset(1, 0);
