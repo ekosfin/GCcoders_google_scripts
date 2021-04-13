@@ -8,13 +8,13 @@ LOG_SHEET_NAME = "REST Logi";
 
 // The script needs to be deployed in the sheet's context
 sApp = SpreadsheetApp.getActiveSpreadsheet();
+scheduleSheet = sApp.getSheetByName(SCHEDULE_SHEET_NAME);
+configSheet = sApp.getSheetByName(CONFIG_SHEET_NAME);
 Utils = new RemeoUtils.Instance();
 Utils.setSApp(sApp);
 Utils.setLogSheetName(LOG_SHEET_NAME);
 
-API_KEY = "REPLACE_API_KEY";
+// The maximum number of deliveries per day/material
+MAX_DELIVERIES = Utils.Settings.getByKey("Kuljetuksia päivässä")[0];
 
-scheduleSheet = sApp.getSheetByName(SCHEDULE_SHEET_NAME);
-materialSheet = sApp.getSheetByName(CONFIG_SHEET_NAME);
-// range = scheduleSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
-// materialRange = materialSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
+API_KEY = "REPLACE_API_KEY";

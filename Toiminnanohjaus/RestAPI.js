@@ -1,27 +1,31 @@
-// const scheduleSheet = sApp.getSheetByName(SCHEDULE_SHEET_NAME);
-// const materialSheet = sApp.getSheetByName(CONFIG_SHEET_NAME);
-const range = scheduleSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
-const materialRange = materialSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
-
 // Nothing to see here
 function doGet(e) {
-  return true;
+  return ContentService.createTextOutput(
+    "GET requests are not accepted at the moment. Please use POST requests instead."
+  );
 }
 
 // Handle all requests
 function doPost(e) {
   let outputJSON;
   let response;
-  const params = e.parameters;
-  const UserData = JSON.parse(e.postData.contents);
+  let params;
+  let UserData;
 
-  //Check for Bad request
+  try {
+    params = e.parameters;
+    UserData = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return ContentService.createTextOutput("400 Bad Request");
+  }
+
+  // Check for Bad request
   if (!params.hasOwnProperty("route")) {
     return ContentService.createTextOutput("400 Bad Request");
   }
 
-  //Check API key
-  if (!UserData.API === API_KEY) {
+  // Check API key
+  if (!(UserData.API === API_KEY)) {
     outputJSON = { message: "Key Invalid" };
     outputJSON = JSON.stringify(outputJSON);
     return ContentService.createTextOutput(outputJSON).setMimeType(
@@ -29,7 +33,7 @@ function doPost(e) {
     );
   }
 
-  //Check email
+  // Check email
   let permissions = verifyEmail_(UserData);
   if (permissions == "Not found") {
     outputJSON = { message: "Email not in system" };
@@ -45,7 +49,7 @@ function doPost(e) {
     );
   }
 
-  //Route tree
+  // Route tree
   if (params.route == "data") {
     outputJSON = getSchedule_(permissions);
     return ContentService.createTextOutput(outputJSON).setMimeType(
@@ -81,14 +85,14 @@ function getSchedule_(permissions) {
   let cell;
 
   // Get week length
-  cell = range.getCell(1, 2);
+  cell = scheduleSheet.getRange(1, 2);
   while (cell.getValue() != "") {
     weekLength++;
     cell = cell.offset(0, 1);
   }
 
   // Get materials
-  cell = materialRange.getCell(1, 1);
+  cell = materialSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kuljetettavat:") {
       cell = cell.offset(1, 0);
@@ -102,7 +106,7 @@ function getSchedule_(permissions) {
   }
 
   // Get color settings
-  cell = materialRange.getCell(1, 1);
+  cell = materialSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Värit:") {
       cell = cell.offset(1, 0);
@@ -118,7 +122,7 @@ function getSchedule_(permissions) {
   }
 
   // Get drivers and assign colors for them based on driver types
-  cell = materialRange.getCell(1, 1);
+  cell = materialSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kuljettajat:") {
       cell = cell.offset(1, 0);
@@ -136,7 +140,7 @@ function getSchedule_(permissions) {
   }
 
   // Fetch deliveries for each material
-  cell = range.getCell(2, 1);
+  cell = scheduleSheet.getRange(2, 1);
   while (cell.getValue() != "") {
     if (materials.includes(cell.getValue())) {
       materialRow["materialName"] = cell.getValue();
@@ -145,12 +149,13 @@ function getSchedule_(permissions) {
       for (let i = 0; i < weekLength; i++) {
         materialRow["data"].push([]);
         // Fetch data if there is any
-        if (cell.getDisplayValue().replace(/[\s\n-]+/gi, "") != "") {
+        if (cell.getValue().replace(/[\s\n-]+/gi, "") != "") {
           cell = cell.offset(1, 0);
-          cell = fetchDelivery_(cell, i, materialRow, driverColors);
-          cell = cell.offset(6, 0);
-          cell = fetchDelivery_(cell, i, materialRow, driverColors);
-          cell = cell.offset(-7, 0);
+          for (let j = 0; j < MAX_DELIVERIES; j++) {
+            cell = fetchDelivery_(cell, i, materialRow, driverColors);
+            cell = cell.offset(6, 0);
+          }
+          cell = cell.offset(-6 * MAX_DELIVERIES - 1, 0);
         }
         cell = cell.offset(0, 1);
       }
@@ -163,7 +168,7 @@ function getSchedule_(permissions) {
   }
 
   // Fetch destinations
-  cell = materialRange.getCell(1, 1);
+  cell = materialSheet.getRange(1, 1);
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kohteet:") {
       cell = cell.offset(1, 0);
@@ -207,9 +212,8 @@ function getAccessRights_() {
 
   // Overwrite unwanted error message
   const logSheet = sApp.getSheetByName(LOG_SHEET_NAME);
-  const logRange = logSheet.getRange(1, 1, scheduleSheet.getMaxRows(), scheduleSheet.getMaxColumns());
   const lastRow = logSheet.getLastRow();
-  const cell = logRange.getCell(lastRow, 1);
+  const cell = logSheet.getRange(lastRow, 1);
   cell.offset(0, 1).setValue("Info");
   cell.offset(0, 2).setValue("Käyttöoikeudet haettu onnistuneesti");
 
@@ -227,8 +231,8 @@ function editSchedule_(pData) {
   for (let i = 0; i < edits.length; i++) {
     row = Utils.Cell.getRowByTitle(scheduleSheet, edits[i].materialName, 1);
     column = getColumnByWeekday_(edits[i].day);
-    countRemaining = 2;
-    cell = range.getCell(row + 2, column);
+    countRemaining = MAX_DELIVERIES;
+    cell = scheduleSheet.getRange(row + 2, column);
     // Write populated entries
     data = edits[i].data;
     for (let j = 0; j < data.length; j++) {
@@ -267,13 +271,13 @@ function fetchDelivery_(cell, index, materialRow, driverColors) {
   let isTwoWay;
   let cellContent;
 
-  if (cell.getDisplayValue().trim() != "") {
-    if (cell.getDisplayValue()[0] == "*") {
+  if (cell.getValue().trim() != "") {
+    if (cell.getValue()[0] == "*") {
       isTwoWay = true;
     } else {
       isTwoWay = false;
     }
-    cellContent = cell.getDisplayValue().replace(/(^\*+|\*+$)/gm, "");
+    cellContent = cell.getValue().replace(/(^\*+|\*+$)/gm, "");
     materialRow["data"][index].push({
       dayItem: cellContent.split(" ").slice(0, 3).join(" "),
       dayInfo: cellContent.split(" ").slice(3).join(" "),
