@@ -72,7 +72,7 @@ function initialize() {
   START_DATE_CELL_SETTING = Utils.Settings.getCellByKey("Päivämäärien aloitus solu");
   START_DATE_SETTING = new Date(Utils.Settings.getDateByKey("Aloitus päivämäärä"));
   CURRENT_DATE_COLOR = Utils.Settings.getByKey("Nykyisen päivän väri")[0];
-  REMOVE_FILTERS = Utils.Settings.getByKey("Poista filterit sarakkeeseen asti")[0];
+  REMOVE_FILTERS = Utils.Settings.getByKey("Filttereitä sarakkeeseen asti")[0];
 }
 
 LAST_DATE_PREFIX = "LAST_DATE_";

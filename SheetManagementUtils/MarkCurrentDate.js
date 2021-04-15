@@ -19,7 +19,7 @@ function removeMarkingsFromPrevious_(sheet, dateMode) {
 
 function markCurrentDate(sheet, dateMode, now) {
   initialize();
-  removeFilterCriterias(sheet);
+  const filters = removeFilterCriterias(sheet);
   removeMarkingsFromPrevious_(sheet, dateMode);
   // Update previous date storage value
   documentProperties.setProperty(LAST_DATE_PREFIX + sheet.getName(), now);
@@ -28,5 +28,6 @@ function markCurrentDate(sheet, dateMode, now) {
   sheet
     .getRange(`${columnLetter}${cell.row + 3}:${columnLetter}`)
     .setBackground(CURRENT_DATE_COLOR);
+  restoreFilterCriterias(sheet, filters);
   Utils.Log.info(`Merkittiin nykyinen päivä taulokossa: "${sheet.getName()}".`);
 }
