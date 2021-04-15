@@ -19,6 +19,7 @@ function removeMarkingsFromPrevious_(sheet, dateMode) {
 
 function markCurrentDate(sheet, dateMode, now) {
   initialize();
+  removeFilterCriterias(sheet);
   removeMarkingsFromPrevious_(sheet, dateMode);
   // Update previous date storage value
   documentProperties.setProperty(LAST_DATE_PREFIX + sheet.getName(), now);

@@ -9,6 +9,7 @@ beforeAll(() => {
   GlobalUtils.maskGoogleServices();
   GlobalUtils.importRemeoUtils();
   GlobalUtils.importFile("./SheetManagementUtils/Constants.js");
+  GlobalUtils.importFile("./SheetManagementUtils/ExpandSheet.js");
   GlobalUtils.importFile("./SheetManagementUtils/MarkCurrentDate.js");
   GlobalUtils.importFile("./SheetManagementUtils/Utils.js");
 });

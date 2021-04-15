@@ -25,6 +25,7 @@ describe("Test Pinja import", () => {
       ["Varaston arvon solu", "A", "1", ""],
       ["Aloitus päivämäärä", "2021-01-01T00:01:00.000+02:00", "", ""],
       ["Nykyisen päivän väri", "#b6d7a8", "", ""],
+      ["Poista filterit sarakkeeseen asti", "0"],
     ];
     const settingsSheet = new sheet(settingsTable);
 
