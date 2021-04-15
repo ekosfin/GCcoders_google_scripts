@@ -7,6 +7,7 @@ function doGet(e) {
 
 // Handle all requests
 function doPost(e) {
+  initialize();
   let outputJSON;
   let response;
   let params;
@@ -58,6 +59,10 @@ function doPost(e) {
   } else if (params.route == "edit" && permissions == "edit") {
     response = editSchedule_(UserData);
     return ContentService.createTextOutput(response);
+  } else if (params.route == "edit" && permissions != "edit") {
+    return ContentService.createTextOutput(
+      "Access denied. Email with edit rights required"
+    );
   } else {
     return ContentService.createTextOutput("400 Bad Request");
   }
@@ -83,6 +88,9 @@ function getSchedule_(permissions) {
     destinations: [],
   };
   let cell;
+
+  const scheduleSheet = sApp.getSheetByName(SCHEDULE_SHEET_NAME);
+  const configSheet = sApp.getSheetByName(CONFIG_SHEET_NAME);
 
   // Get week length
   cell = scheduleSheet.getRange(1, 2);
@@ -126,11 +134,13 @@ function getSchedule_(permissions) {
   while (cell.getValue() != "") {
     if (cell.getValue() == "Kuljettajat:") {
       cell = cell.offset(1, 0);
+      let nextCell;
       while (cell.getValue() != "") {
+        nextCell = cell.offset(0, 1);
         driverColors[cell.getValue()] =
-          colorSettings[cell.offset(0, 1).getValue()];
+          colorSettings[nextCell.getValue()];
         driverItem["driver"] = cell.getValue();
-        driverItem["color"] = colorSettings[cell.offset(0, 1).getValue()];
+        driverItem["color"] = colorSettings[nextCell.getValue()];
         results["drivers"].push({ ...driverItem });
         cell = cell.offset(1, 0);
       }
@@ -188,6 +198,67 @@ function getSchedule_(permissions) {
   return outputJSON;
 }
 
+function editSchedule_(pData) {
+  let edits;
+  let row;
+  let column;
+  let data = [];
+  // Indicates the number of remaining driver entries to iterate
+  let countRemaining;
+
+  if (pData === undefined || !pData.hasOwnProperty("edits")) {
+    Utils.Log.error("Taulukon muokkaus epäonnistui: muokkaukset puuttuivat datasta");
+    return "Edit failed: post data didn't have property 'edits'"
+  }
+
+  edits = pData.edits;
+  sheet = sApp.getSheetByName(SCHEDULE_SHEET_NAME);
+
+  for (let i = 0; i < edits.length; i++) {
+    row = Utils.Cell.getRowByTitle(sheet, edits[i].materialName, 1);
+    column = getColumnByWeekday_(edits[i].day);
+    countRemaining = MAX_DELIVERIES;
+    cell = sheet.getRange(row + 2, column);
+    // Write populated entries
+    data = edits[i].data;
+    for (let j = 0; j < data.length; j++) {
+      cell = addDelivery_(
+        cell,
+        data[j].dayItem,
+        data[j].twoWay,
+        data[j].dayInfo
+      );
+      countRemaining--;
+    }
+    // Write empty entries
+    for (countRemaining; countRemaining > 0; countRemaining--) {
+      cell = addDelivery_(cell, "", "", "");
+    }
+  }
+
+  Utils.Log.info("Taulukkoa muokattu onnistuneesti");
+  return "Edit successful";
+}
+
+function verifyEmail_(pData) {
+  if (pData === undefined || !pData.hasOwnProperty("email")) {
+    return "No 'email' property"
+  }
+  const email = pData.email;
+  const accessRights = getAccessRights_();
+  const found = accessRights.find((element) => element.email == email);
+  if (found === undefined) {
+    return "Not found";
+  }
+  if (found.accessLevel === "edit") {
+    return "edit";
+  } else if (found.accessLevel === "watch") {
+    return "watch";
+  } else {
+    return "Error";
+  }
+}
+
 function getAccessRights_() {
   let accessRights = [];
   let user = {
@@ -211,47 +282,13 @@ function getAccessRights_() {
   }
 
   // Overwrite unwanted error message
-  const logSheet = sApp.getSheetByName(LOG_SHEET_NAME);
-  const lastRow = logSheet.getLastRow();
-  const cell = logSheet.getRange(lastRow, 1);
+  const sheet = sApp.getSheetByName(LOG_SHEET_NAME);
+  const lastRow = sheet.getLastRow();
+  const cell = sheet.getRange(lastRow, 1);
   cell.offset(0, 1).setValue("Info");
   cell.offset(0, 2).setValue("Käyttöoikeudet haettu onnistuneesti");
 
   return accessRights;
-}
-
-function editSchedule_(pData) {
-  const edits = pData.edits;
-  let row;
-  let column;
-  let data = [];
-  // Indicates the number of remaining driver entries to iterate
-  let countRemaining;
-
-  for (let i = 0; i < edits.length; i++) {
-    row = Utils.Cell.getRowByTitle(scheduleSheet, edits[i].materialName, 1);
-    column = getColumnByWeekday_(edits[i].day);
-    countRemaining = MAX_DELIVERIES;
-    cell = scheduleSheet.getRange(row + 2, column);
-    // Write populated entries
-    data = edits[i].data;
-    for (let j = 0; j < data.length; j++) {
-      cell = addDelivery_(
-        cell,
-        data[j].dayItem,
-        data[j].twoWay,
-        data[j].dayInfo
-      );
-      countRemaining--;
-    }
-    // Write empty entries
-    for (countRemaining; countRemaining > 0; countRemaining--) {
-      cell = addDelivery_(cell, "", "", "");
-    }
-  }
-
-  Utils.Log.info("Taulukkoa muokattu onnistuneesti");
-  return "Edit successful";
 }
 
 function getColumnByWeekday_(day) {
@@ -308,20 +345,4 @@ function addDelivery_(cell, dayItem, twoWay, dayInfo) {
   cell = cell.offset(2, 0);
 
   return cell;
-}
-
-function verifyEmail_(pData) {
-  const email = pData.email;
-  const accessRights = getAccessRights_();
-  const found = accessRights.find((element) => element.email == email);
-  if (found === undefined) {
-    return "Not found";
-  }
-  if (found.accessLevel === "edit") {
-    return "edit";
-  } else if (found.accessLevel === "watch") {
-    return "watch";
-  } else {
-    return "Error";
-  }
 }

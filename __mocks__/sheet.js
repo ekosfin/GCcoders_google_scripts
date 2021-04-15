@@ -55,6 +55,17 @@ export default class sheet {
     return this.table[0].length;
   }
 
+  getLastRow() {
+    for (let rowIndex = this.table.length - 1; rowIndex > 0; rowIndex--) {
+      for (let columnIndex = 0; columnIndex < this.table[rowIndex - 1].length; columnIndex++) {
+        if (this.table[rowIndex][columnIndex] != "") {
+          return rowIndex + 1;
+        }
+      }
+    }
+    return 1;
+  }
+
   getColumnGroupDepth() {
     // Dummy implementation
   }

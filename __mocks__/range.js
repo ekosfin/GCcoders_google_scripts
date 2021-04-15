@@ -16,9 +16,7 @@ export default class range {
   }
 
   getValue() {
-    return this.sheet.table[this.endRow - this.startRow][
-      this.endColumn - this.startColumn
-    ];
+    return this.sheet.table[this.startRow - 1][this.startColumn - 1];
   }
 
   getValues() {
@@ -32,6 +30,9 @@ export default class range {
   }
 
   setValue(newValue) {
+    if (newValue === undefined) {
+      newValue = "";
+    }
     this.sheet.table[this.startRow - 1][this.startColumn - 1] = newValue;
     return this;
   }
@@ -49,6 +50,14 @@ export default class range {
       }
     }
     return this;
+  }
+
+  offset(rowOffset, columnOffset) {
+    const newStartRow = this.startRow + rowOffset;
+    const newStartColumn = this.startColumn + columnOffset;
+    const newEndRow = this.endRow + rowOffset;
+    const offsetRange = new range(newStartRow, newStartColumn, newEndRow, null, this.sheet);
+    return offsetRange;
   }
 
   activate() {
