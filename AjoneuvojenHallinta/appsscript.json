@@ -1,21 +1,21 @@
 {
-    "timeZone": "Europe/Helsinki",
-    "dependencies": {
-      "libraries": [
-        {
-          "userSymbol": "RemeoUtils",
-          "version": "0",
-          "libraryId": "1nF7w7f-VmgBVUFpPBVDOAVch_d2jLIEoc9COzxX2_j7zjZpOjIh-TgV4",
-          "developmentMode": true
-        },
-        {
-          "userSymbol": "SheetManagementUtils",
-          "version": "0",
-          "libraryId": "15YibYb0bGnvCWZdVMaB9yZ5rFrjykjZe-XHzE7pd7N8V66BUiB40iuOF",
-          "developmentMode": true
-        }
-      ]
-    },
-    "exceptionLogging": "STACKDRIVER",
-    "runtimeVersion": "V8"
-  }
+  "timeZone": "Europe/Helsinki",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "RemeoUtils",
+        "version": "0",
+        "libraryId": "1U_gU-cCKGN7Hwx9MSMR1wxCpilVF74V7sg7TgsUose7V2nrveVLTViEk",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "SheetManagementUtils",
+        "version": "0",
+        "libraryId": "1GmgCCQZ4smhcryrb0d63pD8UUDG-zKsA8puK8VeP1lxIHbbUXb2-SsnP",
+        "developmentMode": true
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}
