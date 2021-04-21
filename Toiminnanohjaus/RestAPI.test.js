@@ -114,15 +114,15 @@ describe("Test Rest API", () => {
     schedule: [
       {
         materialName: "Material1",
-        data: [[{ dayItem: "Driver1 City2 10:00", dayInfo: "additional info", twoWay:true, color:"#41EE00" }], [], [], [], [], [], []]
+        data: [[{ driver: "Driver1", destination: "City2", time: "10:00", info: "additional info", twoWay: true, color:"#41EE00" }], [], [], [], [], [], []]
       },
       {
         materialName: "Material2",
-        data: [[], [{ dayItem: "Driver2 City1 9", dayInfo: "", twoWay:true, color:"#FBFF00" }, { dayItem: "Driver3 City3 11:30", dayInfo: "info", twoWay:false, color:"#FF0000" }], [], [], [], [], []]
+        data: [[], [{ driver: "Driver2", destination: "City1", time: "9", info: "", twoWay: true, color: "#FBFF00" }, { driver: "Driver3", destination: "City3", time: "11:30", info: "info", twoWay: false, color: "#FF0000" }], [], [], [], [], []]
       },
       {
         materialName: "Material3",
-        data: [[], [], [], [{ dayItem: "Driver1 City1 14", dayInfo: "info", twoWay:false, color:"#41EE00" }], [], [], []]
+        data: [[], [], [], [{ driver: "Driver1", destination: "City1", time: "14", info: "info", twoWay: false, color: "#41EE00" }], [], [], []]
       },
     ],
     drivers: [
@@ -138,7 +138,7 @@ describe("Test Rest API", () => {
       materialName: "Material1", 
       day: "Keskiviikko", 
       data: [
-          { dayItem: "Driver1 City1 12", twoWay: true, dayInfo: "info" }
+          { driver: "Driver1", destination: "City1", time: "12", twoWay: true, info: "info" }
       ]}, {
       materialName: "Material3", 
       day: "Torstai", 

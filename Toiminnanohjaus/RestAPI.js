@@ -160,12 +160,11 @@ function getSchedule_(permissions) {
         materialRow["data"].push([]);
         // Fetch data if there is any
         if (cell.getValue().replace(/[\s\n-]+/gi, "") != "") {
-          cell = cell.offset(1, 0);
           for (let j = 0; j < MAX_DELIVERIES; j++) {
+            cell = cell.offset(1, 0);
             cell = fetchDelivery_(cell, i, materialRow, driverColors);
-            cell = cell.offset(6, 0);
           }
-          cell = cell.offset(-6 * MAX_DELIVERIES - 1, 0);
+          cell = cell.offset(-6 * MAX_DELIVERIES, 0);
         }
         cell = cell.offset(0, 1);
       }
@@ -202,9 +201,10 @@ function editSchedule_(pData) {
   let edits;
   let row;
   let column;
-  let data = [];
+  let deliveryData = [];
   // Indicates the number of remaining driver entries to iterate
   let countRemaining;
+  const dummyDelivery = {driver: "", destination: "", time: "", twoWay: "", info: ""};
 
   if (pData === undefined || !pData.hasOwnProperty("edits")) {
     Utils.Log.error("Taulukon muokkaus epäonnistui: muokkaukset puuttuivat datasta");
@@ -220,19 +220,14 @@ function editSchedule_(pData) {
     countRemaining = MAX_DELIVERIES;
     cell = sheet.getRange(row + 2, column);
     // Write populated entries
-    data = edits[i].data;
-    for (let j = 0; j < data.length; j++) {
-      cell = addDelivery_(
-        cell,
-        data[j].dayItem,
-        data[j].twoWay,
-        data[j].dayInfo
-      );
+    deliveryData = edits[i].data;
+    for (let j = 0; j < deliveryData.length; j++) {
+      cell = addDelivery_(cell, deliveryData[j] );
       countRemaining--;
     }
     // Write empty entries
     for (countRemaining; countRemaining > 0; countRemaining--) {
-      cell = addDelivery_(cell, "", "", "");
+      cell = addDelivery_(cell, dummyDelivery);
     }
   }
 
@@ -305,43 +300,50 @@ function getColumnByWeekday_(day) {
 }
 
 function fetchDelivery_(cell, index, materialRow, driverColors) {
-  let isTwoWay;
-  let cellContent;
+  let driver, destination, time, info, twoWay;
 
   if (cell.getValue().trim() != "") {
     if (cell.getValue()[0] == "*") {
-      isTwoWay = true;
+      twoWay = true;
     } else {
-      isTwoWay = false;
+      twoWay = false;
     }
-    cellContent = cell.getValue().replace(/(^\*+|\*+$)/gm, "");
+    driver = cell.offset(1, 0).getValue();
+    destination = cell.offset(2, 0).getValue();
+    time = cell.offset(3, 0).getValue();
+    info = cell.offset(5, 0).getValue();
     materialRow["data"][index].push({
-      dayItem: cellContent.split(" ").slice(0, 3).join(" "),
-      dayInfo: cellContent.split(" ").slice(3).join(" "),
-      twoWay: isTwoWay,
-      color: driverColors[cellContent.split(" ")[0]],
+      driver: driver,
+      destination: destination,
+      time: time,
+      info: info,
+      twoWay: twoWay,
+      color: driverColors[driver],
     });
   }
 
+  cell = cell.offset(5, 0);
   return cell;
 }
 
-function addDelivery_(cell, dayItem, twoWay, dayInfo) {
-  for (let i = 0; i < 3; i++) {
-    cell.setValue(dayItem.split(" ")[i]);
-    cell = cell.offset(1, 0);
-  }
+function addDelivery_(cell, data) {
+  cell.setValue(data["driver"]);
+  cell = cell.offset(1, 0);
+  cell.setValue(data["destination"]);
+  cell = cell.offset(1, 0);
+  cell.setValue(data["time"]);
+  cell = cell.offset(1, 0);
 
-  if (twoWay) {
+  if (data["twoWay"]) {
     cell.setValue("Meno-paluu");
-  } else if (twoWay === false) {
+  } else if (data["twoWay"] === false) {
     cell.setValue("Meno");
-  } else if (twoWay == "") {
+  } else if (data["twoWay"] == "") {
     cell.setValue("");
   }
 
   cell = cell.offset(1, 0);
-  cell.setValue(dayInfo);
+  cell.setValue(data["info"]);
   cell = cell.offset(2, 0);
 
   return cell;
